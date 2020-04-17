@@ -11,16 +11,29 @@ jobs:
   - name: master-branch-changed
     public: true
     plan:
-      - get: concourse-docs-git
+      - get: check-changes-to-master-branch
         trigger: true
       - task: list-files
         config:
           inputs:
-            - name: concourse-docs-git
+            - name: check-changes-to-master-branch
           platform: linux
           image_resource:
             type: registry-image
-            source: { repository: busybox }
+            source: { repository: bosh/cli2 }
+          params:
+            BOSH_ENVIRONMENT: ((DIR_IP))
+            BOSH_CLIENT: ((BOSH_CLIENT))
+            BOSH_SECRET: ((BOSH_SECRET))
+            BOSH_CA_CERT: ((BOSH_CA_CERT))
+            BOSH_JUMPBOX_KEY: ((BOSH_JUMPBOX_KEY))
           run:
-            path: ls
-            args: ["-la", "./concourse-docs-git"]
+            path: sh
+            args:
+            - -exc
+            - |
+              # echo "$BOSH_JUMPBOX_KEY" > jumpbox.key
+              # echo "$BOSH_CA_CERT" > ca_cert.crt
+              # BOSH_ALL_PROXY="ssh+socks5://jumpbox@18.205.195.59:22?private-key=jumpbox.key"
+              bosh alias-env $BOSH_ENVIRONMENT -e $BOSH_ENVIRONMENT --ca-cert "$BOSH_CA_CERT"
+              bosh deployments
