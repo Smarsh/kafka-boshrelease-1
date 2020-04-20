@@ -4,16 +4,16 @@ resources:
     type: git
     icon: github-circle
     source:
-      uri: https://github.com/dpmidd/PentestNotes.git
+      uri: https://github.com/Smarsh/cf-kafka-boshrelease
       branch: master
 
 jobs:
-  - name: master-branch-changed
+  - name: authenticate-to-bosh
     public: true
     plan:
       - get: check-changes-to-master-branch
         trigger: true
-      - task: list-files
+      - task: configure-bosh-and-repo
         config:
           inputs:
             - name: check-changes-to-master-branch
@@ -27,14 +27,34 @@ jobs:
             BOSH_CLIENT_SECRET: ((BOSH_SECRET))
             BOSH_CA_CERT: ((BOSH_CA_CERT))
             BOSH_JUMPBOX_KEY: ((BOSH_JUMPBOX_KEY))
+            GITHUB_USER: ((GITHUB_USER))
+            GITHUB_PRIV_KEY: ((GITHUB_PRIV_KEY))
+            GITHUB_REPO: ((GITHUB_REPO))
+            KAFKA_TAR: ((KAFKA_TAR))
+            KAFKA_TAR_DOWNLOAD: ((KAFKA_TAR_DOWNLOAD))
           run:
             path: sh
             args:
             - -exc
             - |
+              echo "Configuring files and directories"
+              echo "----"
+              apt-get install git -f -y > /dev/null
+              apt install python3-pip -y > /dev/null
+              pip3 install yq > /dev/null
+              apt-get install wget -f -y > /dev/null
+              mkdir ~/.ssh
+              echo "$GITHUB_PRIV_KEY" > ~/.ssh/id_rsa
+              git clone $GITHUB_REPO
+              export GITHUB_DIR=`echo $GITHUB_REPO | cut -d / -f 5`
               echo "$BOSH_JUMPBOX_KEY" > jumpbox.key
               echo "$BOSH_CA_CERT" > ca_cert.crt
+            
+              echo "Configuring BOSH environment"
               bosh alias-env $BOSH_ENVIRONMENT -e $BOSH_ENVIRONMENT --ca-cert ${PWD}/ca_cert.crt
               export BOSH_CLIENT=david.middleton@smarsh.com
               export BOSH_ALL_PROXY=ssh+socks5://jumpbox@${BOSH_ENVIRONMENT}:22?private-key=${PWD}/jumpbox.key
-              bosh deployments
+              
+              echo "Changing configs for cutting the release" 
+              cd $GITHUB_DIR    
+              wget $KAFKA_TAR_DOWNLOAD
