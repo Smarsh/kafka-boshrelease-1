@@ -42,6 +42,7 @@ jobs:
               apt-get install git -f -y > /dev/null
               apt install python3-pip -y > /dev/null
               pip3 install yq > /dev/null
+              apt-get install jq -y > /dev/null
               apt-get install wget -f -y > /dev/null
               mkdir ~/.ssh
               echo "$GITHUB_PRIV_KEY" > ~/.ssh/id_rsa
@@ -57,4 +58,12 @@ jobs:
               
               echo "Changing configs for cutting the release" 
               cd $GITHUB_DIR    
-              wget $KAFKA_TAR_DOWNLOAD
+              #wget $KAFKA_TAR_DOWNLOAD
+              
+              echo "Remove existing blob entry docker images"    
+              cat config/blobs.yml
+              cp config/blobs.yml config/blobs.yml.old
+
+              ### Trying to get this step working 
+              yq delete -P config/blobs.yml.old 'kafka/kafka_*' > config/blobs.yml
+              cat config/blobs.yml
