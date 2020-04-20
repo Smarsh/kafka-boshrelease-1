@@ -24,7 +24,7 @@ jobs:
           params:
             BOSH_ENVIRONMENT: ((DIR_IP))
             BOSH_CLIENT: ((BOSH_CLIENT))
-            BOSH_SECRET: ((BOSH_SECRET))
+            BOSH_CLIENT_SECRET: ((BOSH_SECRET))
             BOSH_CA_CERT: ((BOSH_CA_CERT))
             BOSH_JUMPBOX_KEY: ((BOSH_JUMPBOX_KEY))
           run:
@@ -32,8 +32,9 @@ jobs:
             args:
             - -exc
             - |
-              # echo "$BOSH_JUMPBOX_KEY" > jumpbox.key
-              # echo "$BOSH_CA_CERT" > ca_cert.crt
-              # BOSH_ALL_PROXY="ssh+socks5://jumpbox@18.205.195.59:22?private-key=jumpbox.key"
-              bosh alias-env $BOSH_ENVIRONMENT -e $BOSH_ENVIRONMENT --ca-cert "$BOSH_CA_CERT"
+              echo "$BOSH_JUMPBOX_KEY" > jumpbox.key
+              echo "$BOSH_CA_CERT" > ca_cert.crt
+              bosh alias-env $BOSH_ENVIRONMENT -e $BOSH_ENVIRONMENT --ca-cert ${PWD}/ca_cert.crt
+              export BOSH_CLIENT=david.middleton@smarsh.com
+              export BOSH_ALL_PROXY=ssh+socks5://jumpbox@${BOSH_ENVIRONMENT}:22?private-key=${PWD}/jumpbox.key
               bosh deployments
