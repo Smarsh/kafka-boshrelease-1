@@ -30,8 +30,6 @@ jobs:
             GITHUB_USER: ((GITHUB_USER))
             GITHUB_PRIV_KEY: ((GITHUB_PRIV_KEY))
             GITHUB_REPO: ((GITHUB_REPO))
-            KAFKA_TAR: ((KAFKA_TAR))
-            KAFKA_TAR_DOWNLOAD: ((KAFKA_TAR_DOWNLOAD))
           run:
             path: sh
             args:
@@ -40,10 +38,6 @@ jobs:
               echo "Configuring files and directories"
               echo "----"
               apt-get install git -f -y > /dev/null
-              apt install python3-pip -y > /dev/null
-              pip3 install yq > /dev/null
-              apt-get install jq -y > /dev/null
-              apt-get install wget -f -y > /dev/null
               mkdir ~/.ssh
               echo "$GITHUB_PRIV_KEY" > ~/.ssh/id_rsa
               git clone $GITHUB_REPO
@@ -56,14 +50,19 @@ jobs:
               export BOSH_CLIENT=david.middleton@smarsh.com
               export BOSH_ALL_PROXY=ssh+socks5://jumpbox@${BOSH_ENVIRONMENT}:22?private-key=${PWD}/jumpbox.key
               
-              echo "Changing configs for cutting the release" 
               cd $GITHUB_DIR    
-              #wget $KAFKA_TAR_DOWNLOAD
-              
-              echo "Remove existing blob entry docker images"    
-              cat config/blobs.yml
-              cp config/blobs.yml config/blobs.yml.old
 
-              ### Trying to get this step working 
-              yq delete -P config/blobs.yml.old 'kafka/kafka_*' > config/blobs.yml
-              cat config/blobs.yml
+              echo "Cutting the release"
+              bosh create-release --force  --version=2.4.1-1
+
+              ## Waiting on S3 bucket for these steps
+              #mkdir             
+              #cat <<EOF > config/final.yml
+              #---
+              #name: kafka
+              #blobstore:
+              #  provider: local
+              #  options:
+              #    blobstore_path:
+              #      .dev-kafka-blobstore
+              #EOF
