@@ -3,7 +3,7 @@ set -eux
 
 #apt-get install git -y -f > /dev/null
 
-git config --global user.email "dmidd87@gmail.com"
+#git config --global user.email "dmidd87@gmail.com"
 
 echo "creating final release"
 
