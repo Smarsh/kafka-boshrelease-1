@@ -9,6 +9,9 @@ git config --global user.email "dmidd87@gmail.com"
 
 cd kafka-repo
 
+bosh
+bosh vms
+
 echo "creating final release"
 
 bosh create-release --final --version=2.4.1-1
