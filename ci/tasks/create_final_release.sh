@@ -2,7 +2,8 @@
 set -eux
 
 apt update
-apt-get install git -y -f
+apt-get install git -y -f > /dev/null
+apt-get install vim -y -f > /dev/null
 
 git config --global user.email "dmidd87@gmail.com"
 
