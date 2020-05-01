@@ -1,6 +1,9 @@
 #!/bin/bash
 set -eux
 
+apt-get install git -y -f > /dev/null
+echo $BOSH_CLIENT_SECRET
+
 git config --global user.email "dmidd87@gmail.com"
 
 echo "creating final release"

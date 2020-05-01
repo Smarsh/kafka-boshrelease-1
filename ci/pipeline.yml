@@ -62,7 +62,7 @@ jobs:
               export BOSH_ALL_PROXY=ssh+socks5://jumpbox@${BOSH_ENVIRONMENT}:22?private-key=${PWD}/jumpbox.key
               
               cd $GITHUB_DIR    
-              echo "hi"
+              echo "hi!"
 
       - task: create_final_release
         file: kafka-repo/ci/tasks/create_final_release.yml
