@@ -68,8 +68,3 @@ jobs:
         file: kafka-repo/ci/tasks/create_final_release.yml
         params: 
           << : *smarsh_releases_bucket
-
-              #bosh create-release --final --version=2.4.1-1
-              #git commit -m"commit!"
-              # send to s3!
-          

@@ -1,9 +1,10 @@
 ---
 platform: linux
 image_resource:
-  type: registry-image
-  source: { repository: bosh/cli2 }
 inputs:
+  source:
+    repository: engineerbetter/pcf-ops
+    tag: latest
 - name: kafka-repo
 outputs:
 - name: release_tarball
