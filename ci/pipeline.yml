@@ -62,9 +62,16 @@ jobs:
               export BOSH_ALL_PROXY=ssh+socks5://jumpbox@${BOSH_ENVIRONMENT}:22?private-key=${PWD}/jumpbox.key
               
               cd $GITHUB_DIR    
-              echo "hi!"
 
       - task: create_final_release
         file: kafka-repo/ci/tasks/create_final_release.yml
         params: 
           << : *blobstore_credentials
+          BOSH_ENVIRONMENT: ((DIR_IP))
+          BOSH_CLIENT: ((BOSH_CLIENT))
+          BOSH_CLIENT_SECRET: ((BOSH_SECRET))
+          BOSH_CA_CERT: ((BOSH_CA_CERT))
+          BOSH_JUMPBOX_KEY: ((BOSH_JUMPBOX_KEY))
+          GITHUB_USER: ((GITHUB_USER))
+          GITHUB_PRIV_KEY: ((GITHUB_PRIV_KEY))
+          GITHUB_REPO: ((GITHUB_REPO))
