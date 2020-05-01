@@ -1,22 +1,37 @@
 ---
+anchors:
+  blobstore_credentials: &blobstore_credentials
+    AWS_ACCESS_KEY_ID: ((smarsh_bosh_releases_bucket_access_key_id))
+    AWS_SECRET_ACCESS_KEY: ((smarsh_bosh_releases_bucket_secret_access_key))
+  smarsh_releases_bucket: &smarsh_releases_bucket
+    bucket: smarsh-bosh-releases
+    access_key_id: ((smarsh_bosh_releases_bucket_access_key_id))
+    secret_access_key: ((smarsh_bosh_releases_bucket_secret_access_key))
+
 resources:
-  - name: check-changes-to-master-branch
+  - name: kafka-repo
     type: git
     icon: github-circle
     source:
       uri: https://github.com/Smarsh/cf-kafka-boshrelease
       branch: master
 
+#  - name: kafka_bosh_final_release
+#    type: s3
+#    source:
+#      << : *smarsh_releases_bucket
+#      regexp: blobs/kafka/kafka_(.*).tgz
+
 jobs:
-  - name: authenticate-to-bosh
+  - name: cut-release
     public: true
     plan:
-      - get: check-changes-to-master-branch
+      - get: kafka-repo
         trigger: true
       - task: configure-bosh-and-repo
         config:
           inputs:
-            - name: check-changes-to-master-branch
+            - name: kafka-repo
           platform: linux
           image_resource:
             type: registry-image
@@ -29,7 +44,8 @@ jobs:
             BOSH_JUMPBOX_KEY: ((BOSH_JUMPBOX_KEY))
             GITHUB_USER: ((GITHUB_USER))
             GITHUB_PRIV_KEY: ((GITHUB_PRIV_KEY))
-            GITHUB_REPO: ((GITHUB_REPO))
+            GITHUB_REPO: ((GITHUB_REPO))            
+
           run:
             path: sh
             args:
@@ -38,6 +54,7 @@ jobs:
               echo "Configuring files and directories"
               echo "----"
               apt-get install git -f -y > /dev/null
+              apt-get install nano -f -y > /dev/null
               mkdir ~/.ssh
               echo "$GITHUB_PRIV_KEY" > ~/.ssh/id_rsa
               git clone $GITHUB_REPO
@@ -52,17 +69,11 @@ jobs:
               
               cd $GITHUB_DIR    
 
-              echo "Cutting the release"
-              bosh create-release --force  --version=2.4.1-1
+      - task: create_final_release
+        file: kafka-repo/ci/tasks/create_final_release.yml
+        params: 
+          << : *blobstore_credentials
 
-              ## Waiting on S3 bucket for these steps
-              #mkdir             
-              #cat <<EOF > config/final.yml
-              #---
-              #name: kafka
-              #blobstore:
-              #  provider: local
-              #  options:
-              #    blobstore_path:
-              #      .dev-kafka-blobstore
-              #EOF
+              #bosh create-release --final --version=2.4.1-1
+              #git commit -m"commit!"
+              # send to s3
