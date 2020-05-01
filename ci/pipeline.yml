@@ -27,6 +27,7 @@ jobs:
         file: kafka-repo/ci/tasks/create_final_release.yml
         params: 
           << : *blobstore_credentials
+          << : *smarsh_releases_bucket
           BOSH_ENVIRONMENT: ((DIR_IP))
           BOSH_CLIENT: ((BOSH_CLIENT))
           BOSH_CLIENT_SECRET: ((BOSH_SECRET))
