@@ -1,8 +1,6 @@
 #!/bin/bash
 set -eux
 
-#apt-get install git -y -f > /dev/null
-
 #git config --global user.email "dmidd87@gmail.com"
 
 cd kafka-repo
