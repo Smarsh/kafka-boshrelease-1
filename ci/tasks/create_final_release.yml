@@ -5,6 +5,7 @@ image_resource:
   source:
     repository: engineerbetter/pcf-ops
     tag: latest
+inputs:
 - name: kafka-repo
 outputs:
 - name: release_tarball
