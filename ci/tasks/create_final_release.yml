@@ -9,14 +9,6 @@ outputs:
 - name: release_tarball
 
 run:
-  path: sh
-  args:
-  - -exc
-  - |
-    echo "installing git again!"
-    apt-get install git -f -y > /dev/null
-
-run:
   path: kafka-repo/ci/tasks/create_final_release.sh
 
 params:
