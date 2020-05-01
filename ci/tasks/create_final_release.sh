@@ -9,7 +9,7 @@ git config --global user.email "dmidd87@gmail.com"
 
 cd kafka-repo
 
-bosh vms
+echo "$BOSH_CLIENT"
 
 echo "creating final release"
 
