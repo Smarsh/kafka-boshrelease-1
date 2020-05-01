@@ -67,4 +67,4 @@ jobs:
       - task: create_final_release
         file: kafka-repo/ci/tasks/create_final_release.yml
         params: 
-          << : *smarsh_releases_bucket
+          << : *blobstore_credentials
