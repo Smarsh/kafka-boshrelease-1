@@ -1,12 +1,12 @@
 ---
 anchors:
   blobstore_credentials: &blobstore_credentials
-    AWS_ACCESS_KEY_ID: ((smarsh_bosh_releases_bucket_access_key_id))
-    AWS_SECRET_ACCESS_KEY: ((smarsh_bosh_releases_bucket_secret_access_key))
+    AWS_ACCESS_KEY_ID: ((aws-access-key-id))
+    AWS_SECRET_ACCESS_KEY: ((aws-secret-access-key))
   smarsh_releases_bucket: &smarsh_releases_bucket
     bucket: smarsh-bosh-releases
-    access_key_id: ((smarsh_bosh_releases_bucket_access_key_id))
-    secret_access_key: ((smarsh_bosh_releases_bucket_secret_access_key))
+    access_key_id: ((aws-access-key-id))
+    secret_access_key: ((aws-secret-access-key))
 
 resources:
   - name: kafka-repo
@@ -14,13 +14,7 @@ resources:
     icon: github-circle
     source:
       uri: https://github.com/Smarsh/cf-kafka-boshrelease
-      branch: master
-
-#  - name: kafka_bosh_final_release
-#    type: s3
-#    source:
-#      << : *smarsh_releases_bucket
-#      regexp: blobs/kafka/kafka_(.*).tgz
+      branch: pipeline
 
 jobs:
   - name: cut-release
@@ -68,12 +62,14 @@ jobs:
               export BOSH_ALL_PROXY=ssh+socks5://jumpbox@${BOSH_ENVIRONMENT}:22?private-key=${PWD}/jumpbox.key
               
               cd $GITHUB_DIR    
+              echo "hi"
 
       - task: create_final_release
         file: kafka-repo/ci/tasks/create_final_release.yml
         params: 
-          << : *blobstore_credentials
+          << : *smarsh_releases_bucket
 
               #bosh create-release --final --version=2.4.1-1
               #git commit -m"commit!"
-              # send to s3
+              # send to s3!
+          
