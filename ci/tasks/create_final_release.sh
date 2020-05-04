@@ -26,7 +26,7 @@ echo "creating final release"
 #cat EOF keys into the private.yml
 
 #Change the bucket name in final.yml
-sed -i 's/: kafka-boshrelease.*/: smarsh-bosh-release-blobs/' config/final.yml
+#sed -i 's/: kafka-boshrelease.*/: smarsh-bosh-release-blobs/' config/final.yml
 
 git config --global user.email "dmidd87@gmail.com"
 git add -A
