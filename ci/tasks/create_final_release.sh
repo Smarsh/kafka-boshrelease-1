@@ -28,7 +28,7 @@ echo "creating final release"
 #Change the bucket name in final.yml
 sed -i 's/: kafka-boshrelease.*/: smarsh-bosh-release-blobs/' config/final.yml
 
-git config --global user.name "dpmidd"
+git config --global user.email "dmidd87@gmail.com"
 git add -A
 git commit -m"changed final.yml"
 
