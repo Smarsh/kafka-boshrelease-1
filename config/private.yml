@@ -2,5 +2,4 @@
 blobstore:
   provider: s3
   options:
-    access_key_id: key_placeholder_1
-    secret_access_key: key_placeholder_2
+    credentials_source: env_or_profile
