@@ -6,7 +6,7 @@ echo "----"
 mkdir ~/.ssh
 echo "$GITHUB_PRIV_KEY" > ~/.ssh/id_rsa
 git clone $GITHUB_REPO
-export GITHUB_DIR=`echo $GITHUB_REPO | cut -d / -f 5`
+# export GITHUB_DIR=`echo $GITHUB_REPO | cut -d / -f 5`
 echo "$BOSH_JUMPBOX_KEY" > jumpbox.key
 echo "$BOSH_CA_CERT" > ca_cert.crt
 
@@ -19,11 +19,9 @@ apt update
 apt-get install git -y -f > /dev/null
 apt-get install vim -y -f > /dev/null
 
-cd $GITHUB_DIR
+cd kafka-repo
 
 echo "creating final release"
-
-#cat EOF keys into the private.yml
 
 #Change the bucket name in final.yml
 #sed -i 's/: kafka-boshrelease.*/: smarsh-bosh-release-blobs/' config/final.yml
