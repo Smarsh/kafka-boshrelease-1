@@ -24,10 +24,9 @@ cd $GITHUB_DIR
 echo "creating final release"
 
 #cat EOF keys into the private.yml
-#change the final.yml to contain the "smarsh-bosh-release_blobs" bucket_name
-#git config --global user.email "dmidd87@gmail.com"
-#git commit -m"asdfasdf"
-#working version of this in run 95 - check notes april 29th
+
+#Change the bucket name in final.yml
+sed -i 's/: kafka-boshrelease.*/: smarsh-bosh-release-blobs/' config/final.yml
 
 bosh create-release --final --version=2.4.1-1 --tarball "../release_tarball/kafka-2.4.1-1.tgz"
 
