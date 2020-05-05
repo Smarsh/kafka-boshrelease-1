@@ -32,6 +32,8 @@ echo "creating final release"
 #git add -A
 #git commit -m"changed final.yml"
 
-bosh create-release --final --version=2.4.1-1 --tarball "../release_tarball/kafka-2.4.1-1.tgz" || true
+echo $AWS_ACCESS_KEY_ID; echo $AWS_SECRET_ACCESS_KEY
+
+bosh create-release --final --version=2.4.1-1 --tarball "../release_tarball/kafka-2.4.1-1.tgz"
 
 ls -lat ../release_tarball/
