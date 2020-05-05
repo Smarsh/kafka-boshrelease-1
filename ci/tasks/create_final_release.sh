@@ -32,6 +32,6 @@ echo "creating final release"
 #git add -A
 #git commit -m"changed final.yml"
 
-bosh create-release --final --version=2.4.1-1 --tarball "../release_tarball/kafka-2.4.1-1.tgz"
+bosh create-release --final --version=2.4.1-1 --tarball "../release_tarball/kafka-2.4.1-1.tgz" || true
 
 ls -lat ../release_tarball/
