@@ -19,7 +19,9 @@ apt update
 apt-get install git -y -f > /dev/null
 apt-get install vim -y -f > /dev/null
 
-cd kafka-repo
+## change directories into the master branch of the repository that is cloned, not the branched clone
+export GITHUB_DIR=`echo $GITHUB_REPO | cut -d / -f 5`
+cd $GITHUB_DIR
 
 echo "creating final release"
 
