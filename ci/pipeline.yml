@@ -42,6 +42,6 @@ jobs:
           GITHUB_PRIV_KEY: ((GITHUB_PRIV_KEY))
           GITHUB_REPO: ((GITHUB_REPO))
 
-      - put: kafka-final-release
-        params:
-          file: release_tarball/kafka-*.tgz
+#      - put: kafka-final-release
+#        params:
+#          file: release_tarball/kafka-*.tgz
