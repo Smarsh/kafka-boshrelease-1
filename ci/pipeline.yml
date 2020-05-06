@@ -16,6 +16,12 @@ resources:
       uri: https://github.com/Smarsh/cf-kafka-boshrelease
       branch: pipeline
 
+  - name: kafka-final-release
+    type: s3
+    source:
+      << : *smarsh_releases_bucket
+      regexp: release_tarball/kafka-(.*).tgz
+
 jobs:
   - name: cut-release
     public: true
@@ -36,3 +42,10 @@ jobs:
           GITHUB_USER: ((GITHUB_USER))
           GITHUB_PRIV_KEY: ((GITHUB_PRIV_KEY))
           GITHUB_REPO: ((GITHUB_REPO))
+
+  - name: send the tar final release to s3
+    public: true 
+    plan:
+    - put: storm_bosh_release_s3
+      params:
+        file: release_tarball/storm-*.tgz
