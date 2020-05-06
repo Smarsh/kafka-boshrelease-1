@@ -25,15 +25,17 @@ cd $GITHUB_DIR
 
 echo "creating final release"
 
-#Change the bucket name in final.yml
-#sed -i 's/: kafka-boshrelease.*/: smarsh-bosh-release-blobs/' config/final.yml
+## Download all of the blobs and packages
+bosh create-release --final --version=2 --tarball "../release_tarball/kafka.tgz" || true
 
-#git config --global user.email "dmidd87@gmail.com"
-#git add -A
-#git commit -m"changed final.yml"
+## Change the bucket destination
+sed -i 's/: kafka-boshrelease.*/: smarsh-bosh-release-blobs/' config/final.yml
 
-echo $AWS_ACCESS_KEY_ID; echo $AWS_SECRET_ACCESS_KEY
+## Fake commit
+git config --global user.email "you@example.com"; git add -A; git commit -m"m"
 
+## Run the final release creation
 bosh create-release --final --version=2.4.1-1 --tarball "../release_tarball/kafka-2.4.1-1.tgz"
 
+## Validate the tar
 ls -lat ../release_tarball/
