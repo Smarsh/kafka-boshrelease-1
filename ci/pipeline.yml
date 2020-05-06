@@ -2,11 +2,11 @@
 anchors:
   smarsh_releases_bucket: &smarsh_releases_bucket
     bucket: smarsh-bosh-releases
-    access_key_id: ((smarsh_bosh_releases_bucket.aws-access-key-id))
-    secret_access_key: ((smarsh_bosh_releases_bucket.aws-secret-access-key))
+    access_key_id: ((aws-access-key-id))
+    secret_access_key: ((aws-secret-access-key))
   blobstore_credentials: &blobstore_credentials
-    AWS_ACCESS_KEY_ID: ((smarsh_bosh_releases_bucket.aws-access-key-id))
-    AWS_SECRET_ACCESS_KEY: ((smarsh_bosh_releases_bucket.aws-secret-access-key))
+    AWS_ACCESS_KEY_ID: ((aws-access-key-id))
+    AWS_SECRET_ACCESS_KEY: ((aws-secret-access-key))
 
 resources:
   - name: kafka-repo
