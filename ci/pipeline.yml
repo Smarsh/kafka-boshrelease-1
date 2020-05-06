@@ -15,12 +15,12 @@ resources:
     source:
       uri: https://github.com/Smarsh/cf-kafka-boshrelease
       branch: pipeline
-
-  - name: kafka-final-release
-    type: s3
-    source:
-      << : *smarsh_releases_bucket
-      regexp: release_tarball/kafka-(.*).tgz
+  
+#  - name: kafka-final-release
+#    type: s3
+#    source:
+#      << : *smarsh_releases_bucket
+#      regexp: release_tarball/kafka-(.*).tgz
 
 jobs:
   - name: cut-release
