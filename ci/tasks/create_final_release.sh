@@ -31,6 +31,9 @@ bosh create-release --final --version=2 --tarball "../release_tarball/kafka.tgz"
 ## Change the bucket destination
 sed -i 's/: kafka-boshrelease.*/: smarsh-bosh-release-blobs/' config/final.yml
 
+## Move the private.yml from the pipeline branch into the current dir
+mv ../kafka-repo/config/private.yml config/
+
 ## Fake commit
 git config --global user.email "you@example.com"; git add -A; git commit -m"m"
 
