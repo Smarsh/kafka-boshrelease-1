@@ -33,7 +33,6 @@ jobs:
         file: kafka-repo/ci/tasks/create_final_release.yml
         params: 
           << : *blobstore_credentials
-#          << : *smarsh-bosh-releases
           BOSH_ENVIRONMENT: ((DIR_IP))
           BOSH_CLIENT: ((BOSH_CLIENT))
           BOSH_CLIENT_SECRET: ((BOSH_SECRET))
@@ -43,9 +42,6 @@ jobs:
           GITHUB_PRIV_KEY: ((GITHUB_PRIV_KEY))
           GITHUB_REPO: ((GITHUB_REPO))
 
-  - name: send the tar final release to s3
-    public: true 
-    plan:
-    - put: storm_bosh_release_s3
-      params:
-        file: release_tarball/storm-*.tgz
+      - put: kafka-final-release
+        params:
+          file: release_tarball/kafka-*.tgz
