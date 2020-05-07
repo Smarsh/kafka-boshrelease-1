@@ -36,7 +36,6 @@ jobs:
           BOSH_ENVIRONMENT: ((DIR_IP))
           BOSH_CA_CERT: ((BOSH_CA_CERT))
           BOSH_JUMPBOX_KEY: ((BOSH_JUMPBOX_KEY))
-          GITHUB_REPO: ((GITHUB_REPO))
 
 #      - put: kafka-final-release
 #        params:

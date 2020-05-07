@@ -9,7 +9,7 @@ apt-get install vim -y -f > /dev/null
 echo "Configuring files, keys, certs and directories"
 echo "==="
 echo "==="
-mkdir ~/.ssh
+GITHUB_REPO="https://github.com/Smarsh/cf-kafka-boshrelease"
 git clone $GITHUB_REPO
 echo "$BOSH_JUMPBOX_KEY" > jumpbox.key
 echo "$BOSH_CA_CERT" > ca_cert.crt
