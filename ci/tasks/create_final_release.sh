@@ -5,7 +5,7 @@ echo "Configuring files, keys, certs and directories"
 echo "==="
 echo "==="
 mkdir ~/.ssh
-echo "$GITHUB_PRIV_KEY" > ~/.ssh/id_rsa
+# echo "$GITHUB_PRIV_KEY" > ~/.ssh/id_rsa
 git clone $GITHUB_REPO
 echo "$BOSH_JUMPBOX_KEY" > jumpbox.key
 echo "$BOSH_CA_CERT" > ca_cert.crt
