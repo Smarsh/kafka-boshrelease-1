@@ -17,7 +17,7 @@ export BOSH_CLIENT=ci-sre-data-services
 export BOSH_ALL_PROXY=ssh+socks5://jumpbox@${BOSH_ENVIRONMENT}:22?private-key=${PWD}/jumpbox.key
 
 # Download dependencies - Working on a docker container already containing these will remove later
-apt update -y -f > /dev/null
+apt update > /dev/null
 apt-get install git -y -f > /dev/null
 apt-get install vim -y -f > /dev/null
 
