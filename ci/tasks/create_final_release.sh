@@ -36,8 +36,5 @@ sed -i 's/: kafka-boshrelease.*/: smarsh-bosh-release-blobs/' config/final.yml
 ## Move the private.yml from the pipeline branch into the current dir.  The private.yml being in config for the initial clone will break BOSH.
 mv ../kafka-repo/config/private.yml config/
 
-## Fake commit to sate BOSH
-git config --global user.email "you@example.com"; git add -A; git commit -m"m"
-
 ## Now that we've downloaded everything needed from the read only bucket, edited the final.yml and created a private.yml our release can be made.
-bosh create-release --final --version=2.4.1-1 --tarball "../release_tarball/kafka-2.4.1-1.tgz"
+bosh create-release --final --force --version=2.4.1-1 --tarball "../release_tarball/kafka-2.4.1-1.tgz"
