@@ -19,8 +19,6 @@ export BOSH_ENVIRONMENT=18.205.195.59
 bosh alias-env $BOSH_ENVIRONMENT -e $BOSH_ENVIRONMENT --ca-cert ${PWD}/ca_cert.crt
 export BOSH_ALL_PROXY=ssh+socks5://jumpbox@${BOSH_ENVIRONMENT}:22?private-key=${PWD}/jumpbox.key
 
-bosh deployments
-
 ## change directories into the master branch of the repository that is cloned, not the branched clone
 export GITHUB_DIR=`echo $GITHUB_REPO | cut -d / -f 5`
 cd $GITHUB_DIR
