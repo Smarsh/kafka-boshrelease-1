@@ -34,7 +34,6 @@ jobs:
         params: 
           << : *blobstore_credentials
           BOSH_ENVIRONMENT: ((DIR_IP))
-#          BOSH_CLIENT: ((BOSH_CLIENT))
           BOSH_CA_CERT: ((BOSH_CA_CERT))
           BOSH_JUMPBOX_KEY: ((BOSH_JUMPBOX_KEY))
           GITHUB_REPO: ((GITHUB_REPO))
