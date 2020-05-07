@@ -13,7 +13,6 @@ echo "$BOSH_CA_CERT" > ca_cert.crt
 # Note: Reference local .envrc on local prod for BOSH flow - BOSH_CLIENT and BOSH_ALL_PROXY need to be set after alias-env
 echo "Configuring BOSH environment"
 bosh alias-env $BOSH_ENVIRONMENT -e $BOSH_ENVIRONMENT --ca-cert ${PWD}/ca_cert.crt
-#export BOSH_CLIENT=ci-sre-data-services
 export BOSH_ALL_PROXY=ssh+socks5://jumpbox@${BOSH_ENVIRONMENT}:22?private-key=${PWD}/jumpbox.key
 
 # Download dependencies - Working on a docker container already containing these will remove later
