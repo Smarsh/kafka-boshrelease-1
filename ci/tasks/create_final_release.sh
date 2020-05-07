@@ -14,7 +14,6 @@ git clone $GITHUB_REPO
 echo "$BOSH_JUMPBOX_KEY" > jumpbox.key
 echo "$BOSH_CA_CERT" > ca_cert.crt
 
-# Note: Reference local .envrc on local prod for BOSH flow - BOSH_CLIENT and BOSH_ALL_PROXY need to be set after alias-env
 echo "Configuring BOSH environment"
 export BOSH_ENVIRONMENT=18.205.195.59
 bosh alias-env $BOSH_ENVIRONMENT -e $BOSH_ENVIRONMENT --ca-cert ${PWD}/ca_cert.crt
