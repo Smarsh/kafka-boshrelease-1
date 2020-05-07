@@ -33,7 +33,6 @@ jobs:
         file: kafka-repo/ci/tasks/create_final_release.yml
         params: 
           << : *blobstore_credentials
-          BOSH_ENVIRONMENT: ((DIR_IP))
           BOSH_CA_CERT: ((BOSH_CA_CERT))
           BOSH_JUMPBOX_KEY: ((BOSH_JUMPBOX_KEY))
 
