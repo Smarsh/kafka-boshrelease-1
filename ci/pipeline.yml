@@ -7,6 +7,11 @@ anchors:
   blobstore_credentials: &blobstore_credentials
     AWS_ACCESS_KEY_ID: ((aws-access-key-id))
     AWS_SECRET_ACCESS_KEY: ((aws-secret-access-key))
+  bosh-creds: &bosh-creds
+    jumpbox_key: |
+      ((jumpbox-key.private_key))
+    ca_cert: |
+      ((ca-cert.certificate))
 
 resources:
   - name: kafka-repo
@@ -33,8 +38,7 @@ jobs:
         file: kafka-repo/ci/tasks/create_final_release.yml
         params: 
           << : *blobstore_credentials
-          BOSH_CA_CERT: ((BOSH_CA_CERT))
-          BOSH_JUMPBOX_KEY: ((BOSH_JUMPBOX_KEY))
+          << : *bosh-creds
 
 #      - put: kafka-final-release
 #        params:

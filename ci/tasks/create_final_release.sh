@@ -11,8 +11,8 @@ echo "==="
 echo "==="
 GITHUB_REPO="https://github.com/Smarsh/cf-kafka-boshrelease"
 git clone $GITHUB_REPO
-echo "$BOSH_JUMPBOX_KEY" > jumpbox.key
-echo "$BOSH_CA_CERT" > ca_cert.crt
+echo "$jumpbox_key" > jumpbox.key
+echo "$ca_cert" > ca_cert.crt
 
 echo "Configuring BOSH environment"
 export BOSH_ENVIRONMENT=18.205.195.59
