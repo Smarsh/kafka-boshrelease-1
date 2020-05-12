@@ -28,13 +28,19 @@ echo "==="
 echo "==="
 
 ## Download all of the blobs and packages from the kafka-boshrelease bucket that is read only
-bosh create-release --final --version=2 --tarball "../release_tarball/kafka.tgz" || true
+bosh create-release --final --version=123 --tarball "../release_tarball/kafka123.tgz" || true
 
 ## Change the bucket destination to smarshes bosh release blobs
 sed -i 's/: kafka-boshrelease.*/: smarsh-bosh-release-blobs/' config/final.yml
 
-## Move the private.yml from the pipeline branch into the current dir.  The private.yml being in config for the initial clone will break BOSH.
-mv ../kafka-repo/config/private.yml config/
+## Create private.yml for BOSH to use our AWS keys
+cat << EOF > config/private.yml
+---
+blobstore:
+  provider: s3
+  options:
+    credentials_source: env_or_profile
+EOF
 
 ## Now that we've downloaded everything needed from the read only bucket, edited the final.yml and created a private.yml our release can be made.
 bosh create-release --final --force --version=2.4.1-1 --tarball "../release_tarball/kafka-2.4.1-1.tgz"
