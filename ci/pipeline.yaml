@@ -1,0 +1,40 @@
+---
+anchors:
+  smarsh_releases_bucket: &smarsh_releases_bucket
+    bucket: smarsh-bosh-releases
+    access_key_id: ((aws-access-key-id))
+    secret_access_key: ((aws-secret-access-key))
+  blobstore_credentials: &blobstore_credentials
+    AWS_ACCESS_KEY_ID: ((aws-access-key-id))
+    AWS_SECRET_ACCESS_KEY: ((aws-secret-access-key))
+  bosh-creds: &bosh-creds
+    jumpbox_key: |
+      ((jumpbox-key.private_key))
+    ca_cert: |
+      ((ca-cert.certificate))
+
+resources:
+- name: git-bosh-release
+  type: git
+  source:
+    uri: https://github.com/Smarsh/cf-kafka-boshrelease.git
+    branch: SAAS-281 
+
+- name: bosh-cli2
+  type: registry-image
+  source:
+    repository: acuzoka/bosh-cli2
+    username: ((docker.username))
+    password: ((docker.password))
+    tag: latest
+
+jobs:
+  - name: create-dev-release
+    plan:
+      - get: git-bosh-release
+        trigger: true
+      - get: bosh-cli2
+      - task: create-dev-release
+        file: git-bosh-release/ci/tasks/create-dev-release.yml 
+        image: bosh-cli2
+      
