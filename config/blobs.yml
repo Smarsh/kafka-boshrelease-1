@@ -1,12 +1,9 @@
-java/jdk8u192-b03.tar.gz:
-  size: 45670457
-  object_id: 71d454ef-230f-4f6c-4578-fccf867c9f02
-  sha: 4d7b2ee7010a70934b6ee23a772d013a698715dd
-kafka/kafka-manager-1.3.3.4.zip:
-  size: 60436159
-  object_id: fb58fb86-6852-4fcd-484b-e708125b5ba7
-  sha: 557d05692aa93c1e9ed577e266698e59649cd96e
-kafka/kafka_2.12-2.4.0.tgz:
-  size: 62283588
-  object_id: 096149cc-692b-4d80-589d-4c94af9a7651
-  sha: sha256:b9582bab0c3e8d131953b1afa72d6885ca1caae0061c2623071e7f396f2ccfee
+java/jdk8u252-b09.tar.gz:
+  size: 102170196
+  sha: sha256:2b59b5282ff32bce7abba8ad6b9fde34c15a98f949ad8ae43e789bbd78fc8862
+kafka/kafka-manager-1.3.3.23.tgz:
+  size: 967185
+  sha: sha256:820cd209bf5cef5bb1ea9b768202847464e7426dd703d95abf8b8c06aa80a135
+kafka/kafka_2.12-2.4.1.zip:
+  size: 62358954
+  sha: sha256:2177cbd14118999e1d76fec628ca78ace7e6f841219dbc6035027c796bbe1a2a
