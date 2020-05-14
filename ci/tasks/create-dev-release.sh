@@ -64,9 +64,9 @@ main() {
   [[ ! -d ${SRC} ]] && mkdir -p ${SRC}
 
   if [[ ! -d ../${OUTPUT_DIR} ]] ; then 
-    tarBallPath=./kafka-release.tgz
+    tarBallPath=./kafka-dev-release.tgz
   else
-    tarBallPath=../${OUTPUT_DIR}/kafka-release.tgz
+    tarBallPath=../${OUTPUT_DIR}/kafka-dev-release.tgz
   fi
 
   # remove blobs
