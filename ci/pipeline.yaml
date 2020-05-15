@@ -4,6 +4,7 @@ anchors:
     bucket: smarsh-bosh-releases
     access_key_id: ((aws-access-key-id))
     secret_access_key: ((aws-secret-access-key))
+
   blobstore_credentials: &blobstore_credentials
     AWS_ACCESS_KEY_ID: ((aws-access-key-id))
     AWS_SECRET_ACCESS_KEY: ((aws-secret-access-key))
@@ -20,6 +21,12 @@ resources:
     uri: https://github.com/Smarsh/cf-kafka-boshrelease.git
     branch: SAAS-281 
 
+- name: git-bosh-final-release
+  type: git
+  source:
+    uri: https://github.com/Smarsh/cf-kafka-boshrelease.git
+    branch: master
+
 - name: bosh-cli2
   type: registry-image
   source:
@@ -28,8 +35,21 @@ resources:
     password: ((docker.password))
     tag: latest
 
+- name: s3-dev-release
+  type: s3
+  source:
+    << : *smarsh_releases_bucket
+    versioned_file: sredataservices/dev-releases/kafka-dev-release.tgz
+
+- name: s3-release
+  type: s3
+  source:
+    << : *smarsh_releases_bucket
+    regexp: sredataservices/dev-releases/kafka-dev-release.tgz
+
 jobs:
   - name: create-dev-release
+    serial: true
     plan:
       - get: git-bosh-release
         trigger: true
@@ -37,4 +57,16 @@ jobs:
       - task: create-dev-release
         file: git-bosh-release/ci/tasks/create-dev-release.yml 
         image: bosh-cli2
+      - put: s3-dev-release
+        params:
+          file: create-dev-release/kafka-dev-release.tgz
       
+  - name: create-final-release
+    plan:
+      - get: git-bosh-final-release
+        trigger: true
+      - get: bosh-cli2
+      - get: s3-dev-release
+      - task: create-release
+        file: git-bosh-final-release/ci/tasks/create-release.yml
+        image: bosh-cli2
