@@ -12,7 +12,7 @@ USE_PIPELINE=0
 
 export ROOT_PATH=${PWD}
 export DEV_RELEASE_DIR=${ROOT_PATH}/s3-dev-release/kafka-dev-release.tgz
-INPUT_DIR=git-bosh-final-release
+INPUT_DIR=git-bosh-release
 OUTPUT_DIR=create-release
 PROMOTED_REPO=${INPUT_DIR}-pr
 
@@ -53,12 +53,12 @@ fi
 
 printf "\n${BOLD}${GREEN}Create final release${RESET}\n"
 
-echo git config --global user.email "ci@localhost"
-echo git config --global user.name "CI Bot"
+git config --global user.email "ci@localhost"
+git config --global user.name "CI Bot"
 
 popd
 
-pushd ./bosh-dns-release
+pushd ./${INPUT_DIR}
 tag_name="v${VERSION}"
 
 tag_annotation="Final release ${VERSION} tagged via concourse"
@@ -66,7 +66,7 @@ tag_annotation="Final release ${VERSION} tagged via concourse"
 git tag -a "${tag_name}" -m "${tag_annotation}"
 popd
 
-git clone ./bosh-dns-release $PROMOTED_REPO
+git clone ./${INPUT_DIR} $PROMOTED_REPO
 
 pushd $PROMOTED_REPO
 git status

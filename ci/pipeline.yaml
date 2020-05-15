@@ -61,7 +61,7 @@ jobs:
         params:
           file: create-dev-release/kafka-*-release.tgz
       
-  - name: create-final-release
+  - name: publish-final-release
     serial: true
     plan:
       - get: git-bosh-release
