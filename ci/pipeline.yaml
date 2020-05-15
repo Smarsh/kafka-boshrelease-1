@@ -41,6 +41,12 @@ resources:
     << : *smarsh_releases_bucket
     regexp: sredataservices/dev-releases/kafka-(.*)-release.tgz
 
+- name: s3-final-release
+  type: s3
+  source:
+    << : *smarsh_releases_bucket
+    regexp: sredataservices/releases/kafka-(.*)-release.tgz
+
 jobs:
   - name: create-dev-release
     serial: true
@@ -62,8 +68,8 @@ jobs:
         trigger: true
         passed:
           - create-dev-release
-      - get: bosh-cli2
       - get: s3-dev-release
+      - get: bosh-cli2
       - task: create-release
         file: git-bosh-release/ci/tasks/create-release.yml
         image: bosh-cli2
