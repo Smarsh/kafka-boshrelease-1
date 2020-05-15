@@ -21,11 +21,11 @@ resources:
     uri: https://github.com/Smarsh/cf-kafka-boshrelease.git
     branch: SAAS-281 
 
-- name: git-bosh-final-release
-  type: git
-  source:
-    uri: https://github.com/Smarsh/cf-kafka-boshrelease.git
-    branch: master
+# - name: git-bosh-final-release
+#   type: git
+#   source:
+#     uri: https://github.com/Smarsh/cf-kafka-boshrelease.git
+#     branch: master
 
 - name: bosh-cli2
   type: registry-image
@@ -39,13 +39,7 @@ resources:
   type: s3
   source:
     << : *smarsh_releases_bucket
-    versioned_file: sredataservices/dev-releases/kafka-dev-release.tgz
-
-- name: s3-release
-  type: s3
-  source:
-    << : *smarsh_releases_bucket
-    regexp: sredataservices/dev-releases/kafka-dev-release.tgz
+    regexp: sredataservices/dev-releases/kafka-(.*)-release.tgz
 
 jobs:
   - name: create-dev-release
@@ -59,14 +53,17 @@ jobs:
         image: bosh-cli2
       - put: s3-dev-release
         params:
-          file: create-dev-release/kafka-dev-release.tgz
+          file: create-dev-release/kafka-*-release.tgz
       
   - name: create-final-release
+    serial: true
     plan:
-      - get: git-bosh-final-release
+      - get: git-bosh-release
         trigger: true
+        passed:
+          - create-dev-release
       - get: bosh-cli2
       - get: s3-dev-release
       - task: create-release
-        file: git-bosh-final-release/ci/tasks/create-release.yml
+        file: git-bosh-release/ci/tasks/create-release.yml
         image: bosh-cli2
