@@ -4,4 +4,5 @@ inputs:
 outputs:
 - name: create-dev-release
 run:
-  path: pull-request/ci/tasks/create-dev-release.sh 
+  path: pull-request/ci/tasks/create-dev-release.sh
+  dir: pull-request

@@ -11,6 +11,7 @@ ROOT_DIR=$(pwd)
 USE_PIPELINE=0
 INPUT_DIR=pull-request
 OUTPUT_DIR=create-dev-release
+SOURCE_DL_DIR=.downloads
 
 BOLD=$(tput bold)
 RED=$(tput setaf 1)
@@ -20,16 +21,7 @@ MAGENTA=$(tput setaf 5)
 RESET=$(tput sgr0)
 
 
-# this allows this script to run in Concourse and locally
-[[ -d ./${INPUT_DIR} ]] && USE_PIPELINE=1
-
-if [[ ${USE_PIPELINE} -ne 0 ]]; then
-  SRC=${ROOT_DIR}/download
-else
-  SRC=/tmp/$$/download
-fi
-
-[[ ${USE_PIPELINE} -ne 0 ]] && pushd ./${INPUT_DIR}
+[[ ! -d ${SOURCE_DL_DIR} ]] && mkdir ${SOURCE_DL_DIR}
 
 VERSION_FILE="$(pwd)/VERSIONS"
 
@@ -61,10 +53,9 @@ addBlob() {
 }
 
 main() {
-  [[ ! -d ${SRC} ]] && mkdir -p ${SRC}
 
   if [[ ! -d ../${OUTPUT_DIR} ]] ; then 
-    tarBallPath=./kafka-dev-release.tgz
+    tarBallPath=${SOURCE_DL_DIR}/kafka-dev-release.tgz
   else
     tarBallPath=../${OUTPUT_DIR}/kafka-dev-release.tgz
   fi
@@ -74,7 +65,7 @@ main() {
   
   for key in "${!downloads[@]}" 
   do
-    local file=${SRC}/$(basename ${key})
+    local file=${SOURCE_DL_DIR}/$(basename ${key})
     local blobPath=${key}
 
     download ${file} ${downloads[${key}]}
@@ -93,5 +84,3 @@ main() {
 
 bosh reset-release
 main
-
-[[ $USE_PIPELINE -ne 0 ]] && popd
