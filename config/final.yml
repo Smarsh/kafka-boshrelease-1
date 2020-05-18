@@ -2,7 +2,5 @@
 blobstore:
   provider: s3
   options:
-    bucket_name: lgs-bosh-release-013976176497
-    region: eu-west-2
-    #bucket_name: kafka-boshrelease
+    bucket_name: kafka-boshrelease
 final_name: kafka
