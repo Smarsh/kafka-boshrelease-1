@@ -13,19 +13,19 @@ anchors:
       ((jumpbox-key.private_key))
     ca_cert: |
       ((ca-cert.certificate))
+    
+resource_types:
+- name: pull-request
+  type: docker-image
+  source:
+    repository: teliaoss/github-pr-resource
 
 resources:
-- name: git-bosh-release
-  type: git
-  source:
-    uri: https://github.com/Smarsh/cf-kafka-boshrelease.git
-    branch: SAAS-281 
-
-# - name: git-bosh-final-release
+# - name: git-bosh-release
 #   type: git
 #   source:
 #     uri: https://github.com/Smarsh/cf-kafka-boshrelease.git
-#     branch: master
+#     branch: SAAS-281 
 
 - name: bosh-cli2
   type: registry-image
@@ -41,35 +41,52 @@ resources:
     << : *smarsh_releases_bucket
     regexp: sredataservices/dev-releases/kafka-(.*)-release.tgz
 
-- name: s3-final-release
-  type: s3
+- name: pull-request-bosh-release
+  type: pull-request
+  check_every: 5m
   source:
-    << : *smarsh_releases_bucket
-    regexp: sredataservices/releases/kafka-(.*)-release.tgz
+    repository: smarsh/cf-kafka-boshrelease
+    access_token: ((github-access-token))
+    base_branch: master
 
 jobs:
-  - name: create-dev-release
+  - name: pull-request
     serial: true
     plan:
-      - get: git-bosh-release
+      - get: pull-request
+        version: every
         trigger: true
+      - put: pull-request
+        params:
+          path: pull-request
+          status: pending
       - get: bosh-cli2
       - task: create-dev-release
-        file: git-bosh-release/ci/tasks/create-dev-release.yml 
+        file: pull-request/ci/tasks/create-dev-release.yml 
         image: bosh-cli2
-      - put: s3-dev-release
+        on_failure:
+          put: pull-request
+          params:
+            path: pull-request
+            status: failure
+      - put: pull-request
         params:
-          file: create-dev-release/kafka-*-release.tgz
+          path: pull-request
+          status: success
+      # - put: s3-dev-release
+      #   params:
+      #     file: create-dev-release/kafka-*-release.tgz
       
-  - name: publish-final-release
-    serial: true
-    plan:
-      - get: git-bosh-release
-        trigger: true
-        passed:
-          - create-dev-release
-      - get: s3-dev-release
-      - get: bosh-cli2
-      - task: create-release
-        file: git-bosh-release/ci/tasks/create-release.yml
-        image: bosh-cli2
+      
+  # - name: publish-final-release
+  #   serial: true
+  #   plan:
+  #     - get: git-bosh-release
+  #       trigger: true
+  #       passed:
+  #         - create-dev-release
+  #     - get: s3-dev-release
+  #     - get: bosh-cli2
+  #     - task: create-release
+  #       file: git-bosh-release/ci/tasks/create-release.yml
+  #       image: bosh-cli2

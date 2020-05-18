@@ -1,7 +1,7 @@
 platform: linux
 inputs:
-- name: git-bosh-release
+- name: pull-request
 outputs:
 - name: create-dev-release
 run:
-  path: git-bosh-release/ci/tasks/create-dev-release.sh 
+  path: pull-request/ci/tasks/create-dev-release.sh 

@@ -9,7 +9,7 @@ fi
 SHELL=/bin/bash
 ROOT_DIR=$(pwd)
 USE_PIPELINE=0
-INPUT_DIR=git-bosh-release
+INPUT_DIR=pull-request
 OUTPUT_DIR=create-dev-release
 
 BOLD=$(tput bold)
