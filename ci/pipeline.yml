@@ -41,7 +41,7 @@ resources:
     << : *smarsh_releases_bucket
     regexp: sredataservices/dev-releases/kafka-(.*)-release.tgz
 
-- name: pull-request-bosh-release
+- name: pull-request
   type: pull-request
   check_every: 5m
   source:
@@ -73,9 +73,9 @@ jobs:
         params:
           path: pull-request
           status: success
-      # - put: s3-dev-release
-      #   params:
-      #     file: create-dev-release/kafka-*-release.tgz
+      - put: s3-dev-release
+        params:
+          file: create-dev-release/kafka-*-release.tgz
       
       
   # - name: publish-final-release
