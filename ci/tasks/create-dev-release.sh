@@ -8,8 +8,6 @@ fi
 
 SHELL=/bin/bash
 ROOT_DIR=$(pwd)
-USE_PIPELINE=0
-INPUT_DIR=pull-request
 OUTPUT_DIR=create-dev-release
 SOURCE_DL_DIR=.downloads
 BOSH_RELEASE_VERSION_FILE=../version/version
