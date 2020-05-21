@@ -80,7 +80,7 @@ main() {
   # fix - removing .final_builds folder is not necessary when running locally however when running in a pipeline 
   # which uses bosh version 6.2.1 bosh create-release --force fails
   # that requires this hidden directory to be renamed/removed
-  [[ $USE_PIPELINE -ne 0 ]] && rm -fr .final_builds
+  [[ -f  ${BOSH_RELEASE_VERSION_FILE} ]] && rm -fr .final_builds
   bosh create-release --force --name kafka --version=${BOSH_RELEASE_VERSION} --timestamp-version --tarball=${tarBallPath}
 }
 
