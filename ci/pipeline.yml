@@ -15,10 +15,10 @@ anchors:
     BOSH_ENVIRONMENT: ((bosh-environment))
    
 resources:
-  - name: bosh-cli2
+  - name: boshcli2
     type: registry-image
     source:
-      repository: acuzoka/bosh-cli2
+      repository: afamuzoka/boshcli2
       username: ((docker.username))
       password: ((docker.password))
       tag: latest
@@ -35,7 +35,7 @@ resources:
       driver: s3
       << : *smarsh_releases_bucket
       region: eu-west-2
-      file: sredataservices/version
+      key: sredataservices/version
       initial_version: 2.4.2
 
   - name: kafka-repo
@@ -43,14 +43,14 @@ resources:
     icon: github-circle
     source:
       uri: https://github.com/Smarsh/cf-kafka-boshrelease
-      branch: master
+      branch: SAAS-281
   
-  - name: kafka-final-release
-    type: s3
-    source:
-      << : *smarsh_releases_bucket
-      regexp: sredataservices/releases/kafka-(.*).tgz
-
+#  - name: kafka-final-release
+#    type: s3
+#    source:
+#      << : *smarsh_releases_bucket
+#      regexp: sredataservices/releases/kafka-(.*).tgz
+#
 jobs:
   - name: create-dev-release
     public: true
@@ -63,14 +63,13 @@ jobs:
         trigger: false
         params:
           pre: rc
-      - put: version
-      # - put: version
-      #   params:
-      #     bump: patch
-      - get: bosh-cli2
+      - get: boshcli2
       - task: create-dev-release
         file:  kafka-repo/ci/tasks/create-dev-release.yml 
-        image: bosh-cli2
+        image: boshcli2
+      - put: version
+        params:
+          pre: rc 
         # on_failure:
           # put: pull-request
           # params:
@@ -81,20 +80,20 @@ jobs:
         params:
           file: create-dev-release/kafka-*.tgz
 
-  - name: cut-release
-    public: true
-    plan:
-      - get: kafka-repo
-        trigger: true
-      - get: version
-        params:
-          bump: patch   
-      - task: create_final_release
-        file: kafka-repo/ci/tasks/create_final_release.yml
-        params: 
-          << : *blobstore_credentials
-          << : *bosh-creds
-          BLOBSTORE: smarsh-bosh-release-blobs
-      - put: kafka-final-release
-        params:
-          file: release_tarball/kafka-*.tgz
+  # - name: cut-release
+  #   public: true
+  #   plan:
+  #     - get: kafka-repo
+  #       trigger: true
+  #     - get: version
+  #       params:
+  #         bump: patch   
+  #     - task: create_final_release
+  #       file: kafka-repo/ci/tasks/create_final_release.yml
+  #       params: 
+  #         << : *blobstore_credentials
+  #         << : *bosh-creds
+  #         BLOBSTORE: smarsh-bosh-release-blobs
+  #     - put: kafka-final-release
+  #       params:
+  #         file: release_tarball/kafka-*.tgz
