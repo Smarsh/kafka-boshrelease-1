@@ -25,7 +25,7 @@ KAFKA_VERSION=${KAFKA_VERSION:?required}
 KAFKA_MANAGER_VERSION=${KAFKA_MANAGER_VERSION:?required}
 JAVA_VERSION=${JAVA_VERSION:?required}
 
-if [[ ! -f  ${BOSH_RELEASE_VERSION_FILE} ]] ; then
+if [[ -f  ${BOSH_RELEASE_VERSION_FILE} ]] ; then
   BOSH_RELEASE_VERSION=$(cat ${BOSH_RELEASE_VERSION_FILE})
 else 
   BOSH_RELEASE_VERSION=${KAFKA_VERSION}
@@ -75,7 +75,7 @@ main() {
 
   done
   
-  printf "\n${BOLD}${GREEN}Create release${RESET}\n"
+  printf "\n${BOLD}${GREEN}Create release version ${BOSH_RELEASE_VERSION}${RESET}\n"
   
   # fix - removing .final_builds folder is not necessary when running locally however when running in a pipeline 
   # which uses bosh version 6.2.1 bosh create-release --force fails

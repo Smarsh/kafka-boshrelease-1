@@ -69,7 +69,7 @@ jobs:
         image: boshcli2
       - put: version
         params:
-          pre: rc 
+          file: version/number
         # on_failure:
           # put: pull-request
           # params:
