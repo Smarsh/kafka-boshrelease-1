@@ -80,6 +80,7 @@ blobstore:
 provider: s3
 options:
   bucket_name: smarsh-bosh-release-blobs
+  region: eu-west-2
 name: kafka
 EOF
 
