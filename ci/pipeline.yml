@@ -8,10 +8,8 @@ anchors:
     AWS_ACCESS_KEY_ID: ((aws-access-key-id))
     AWS_SECRET_ACCESS_KEY: ((aws-secret-access-key))
   bosh-creds: &bosh-creds
-    jumpbox_key: |
-      ((jumpbox-key))
-    ca_cert: |
-      ((ca-cert))
+    jumpbox_key: ((jumpbox-key))
+    ca_cert: ((ca-cert))
     BOSH_ENVIRONMENT: ((bosh-environment))
    
 resources:
@@ -82,7 +80,7 @@ jobs:
           file: version/number
       - get: boshcli2
       - task: create-rc-release
-        file:  kafka-repo/ci/tasks/create-rc-release.yml 
+        file: kafka-repo/ci/tasks/create-rc-release.yml 
         image: boshcli2
       - put: s3-rc-release
         params:
@@ -103,6 +101,7 @@ jobs:
         passed:
           - create-rc-release
       - get: s3-rc-release
+      - get: boshcli2
       - task: create-final-release
         file: kafka-repo/ci/tasks/create-final-release.yml
         image: boshcli2

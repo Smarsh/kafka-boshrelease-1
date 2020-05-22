@@ -8,7 +8,7 @@ outputs:
 - name: kafka-repo-release
 
 run:
-  path: kafka-repo/ci/tasks/create_final_release.sh
+  path: kafka-repo/ci/tasks/create-final-release.sh
 
 params:
   AWS_ACCESS_KEY_ID:
