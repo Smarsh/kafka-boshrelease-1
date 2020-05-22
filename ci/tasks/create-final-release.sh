@@ -8,8 +8,8 @@ GITHUB_REPO="kafka-repo"
 PROMOTED_REPO='kafka-repo-release'
 git clone $GITHUB_REPO $PROMOTED_REPO
 
-echo "$jumpbox_key" > jumpbox.key
-echo "$ca_cert" > ca_cert.crt
+echo "$jumpbox_key" | jq -r .private_key > jumpbox.key
+echo "$ca_cert" | jq -r .certificate > ca_cert.crt
 
 echo "Configuring BOSH environment"
 bosh alias-env $BOSH_ENVIRONMENT -e $BOSH_ENVIRONMENT --ca-cert ${PWD}/ca_cert.crt
