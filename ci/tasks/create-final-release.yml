@@ -7,8 +7,9 @@ image_resource:
     tag: latest
 inputs:
 - name: kafka-repo
+- name: s3-rc-release
 outputs:
-- name: release_tarball
+- name: release-tarball
 
 run:
   path: kafka-repo/ci/tasks/create_final_release.sh

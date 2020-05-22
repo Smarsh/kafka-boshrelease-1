@@ -4,7 +4,7 @@ inputs:
 - name: kafka-repo
 - name: version
 outputs:
-- name: create-dev-release
+- name: create-rc-release
 run:
-  path: ci/tasks/create-dev-release.sh
+  path: ci/tasks/create-rc-release.sh
   dir: kafka-repo

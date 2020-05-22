@@ -23,11 +23,11 @@ resources:
       password: ((docker.password))
       tag: latest
   
-  - name: s3-dev-release
+  - name: s3-rc-release
     type: s3
     source:
       << : *smarsh_releases_bucket
-      regexp: sredataservices/dev-releases/kafka-(.*).tgz
+      regexp: sredataservices/rc-release/kafka-(.*).tgz
 
   - name: version
     type: semver
@@ -49,51 +49,71 @@ resources:
 #    type: s3
 #    source:
 #      << : *smarsh_releases_bucket
-#      regexp: sredataservices/releases/kafka-(.*).tgz
+#      regexp: sredataservices/release/kafka-(.*).tgz
 #
 jobs:
-  - name: create-dev-release
+
+  - name: rc
     public: true
     serial: true
     plan:
       - get: kafka-repo
-        version: every
         trigger: true
       - get: version
         trigger: false
         params:
-          pre: rc
-      - get: boshcli2
-      - task: create-dev-release
-        file:  kafka-repo/ci/tasks/create-dev-release.yml 
-        image: boshcli2
+          pre: rc 
       - put: version
         params:
           file: version/number
-        # on_failure:
-          # put: pull-request
-          # params:
-          #   path: pull-request
-          #   status: failure
-      
-      - put: s3-dev-release
-        params:
-          file: create-dev-release/kafka-*.tgz
 
-  # - name: cut-release
-  #   public: true
-  #   plan:
-  #     - get: kafka-repo
-  #       trigger: true
-  #     - get: version
-  #       params:
-  #         bump: patch   
-  #     - task: create_final_release
-  #       file: kafka-repo/ci/tasks/create_final_release.yml
-  #       params: 
-  #         << : *blobstore_credentials
-  #         << : *bosh-creds
-  #         BLOBSTORE: smarsh-bosh-release-blobs
-  #     - put: kafka-final-release
-  #       params:
-  #         file: release_tarball/kafka-*.tgz
+  - name: create-rc-release
+    public: true
+    serial: true
+    plan:
+      - get: kafka-repo
+        trigger: true
+      - get: version
+        trigger: false
+        params:
+          pre: rc 
+      - put: version
+        params:
+          file: version/number
+      - get: boshcli2
+      - task: create-rc-release
+        file:  kafka-repo/ci/tasks/create-rc-release.yml 
+        image: boshcli2
+      - put: s3-rc-release
+        params:
+          file: create-rc-release/kafka-*.tgz
+
+  - name: cut-release
+    public: true
+    serial: true
+    plan:
+      - get: kafka-repo
+        trigger: false
+        passed: 
+          - create-rc-release
+      - get: version
+        trigger: false
+        params:
+          bump: final
+        passed:
+          - create-rc-release
+      - get: s3-rc-release
+      - task: create-final-release
+        file: kafka-repo/ci/tasks/create-final-release.yml
+        image: boshcli2
+        params: 
+          << : *blobstore_credentials
+          << : *bosh-creds
+          BLOBSTORE: smarsh-bosh-release-blobs
+      - put: kafka-final-release
+        params:
+          file: release-tarball/kafka-*.tgz
+      - name: version-bump
+        put: version
+        params:
+          bump: patch

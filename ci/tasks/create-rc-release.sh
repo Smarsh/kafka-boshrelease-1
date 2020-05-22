@@ -8,7 +8,7 @@ fi
 
 SHELL=/bin/bash
 ROOT_DIR=$(pwd)
-OUTPUT_DIR=create-dev-release
+OUTPUT_DIR=create-rc-release
 SOURCE_DL_DIR=.downloads
 BOSH_RELEASE_VERSION_FILE=../version/version
 SOURCE_VERSION_FILE="$(pwd)/VERSIONS"
