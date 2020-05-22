@@ -3,6 +3,7 @@ platform: linux
 inputs:
 - name: kafka-repo
 - name: s3-rc-release
+- name: version
 outputs:
 - name: release-tarball
 - name: kafka-repo-release
