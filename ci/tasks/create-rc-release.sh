@@ -74,7 +74,13 @@ main() {
     addBlob ${file} ${blobPath}
 
   done
-  
+
+  # cache blobs.yml file for jobs that require it as there is no ability to cache artficats
+  # between jobs
+  if [[ -d ../blobs-yml ]]; then
+    cat config/blobs.yml > ../blobs-yml/blobs.yml
+  fi
+
   printf "\n${BOLD}${GREEN}Create release version ${BOSH_RELEASE_VERSION}${RESET}\n"
   
   # fix - removing .final_builds folder is not necessary when running locally however when running in a pipeline 

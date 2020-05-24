@@ -11,7 +11,13 @@ anchors:
     jumpbox_key: ((jumpbox-key))
     ca_cert: ((ca-cert))
     BOSH_ENVIRONMENT: ((bosh-environment))
-   
+
+resource_types:
+  - name: cache-file-contents
+    type: docker-image
+    source:
+      repository: moredhel/keyval-resource
+      
 resources:
   - name: boshcli2
     type: registry-image
@@ -49,6 +55,9 @@ resources:
       << : *smarsh_releases_bucket
       regexp: sredataservices/release/kafka-(.*).tgz
 
+  - name: blobs-yml
+    type: cache-file-contents
+
 jobs:
 
   - name: rc
@@ -78,10 +87,14 @@ jobs:
       - put: version
         params:
           file: version/number
+          
       - get: boshcli2
       - task: create-rc-release
         file: kafka-repo/ci/tasks/create-rc-release.yml 
         image: boshcli2
+      - put: blobs-yml
+        params:
+          file: blobs-yml/blobs.yml
       - put: s3-rc-release
         params:
           file: create-rc-release/kafka-*.tgz
