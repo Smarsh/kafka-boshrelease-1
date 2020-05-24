@@ -78,8 +78,10 @@ jobs:
     public: true
     serial: true
     plan:
-      - get: kafka-repo
-        trigger: true
+      - in_parallel:
+        - get: kafka-repo
+          trigger: true
+        - get: boshcli2
       - get: version
         trigger: false
         params:
@@ -87,14 +89,12 @@ jobs:
       - put: version
         params:
           file: version/number
-          
-      - get: boshcli2
       - task: create-rc-release
         file: kafka-repo/ci/tasks/create-rc-release.yml 
         image: boshcli2
       - put: blobs-yml
         params:
-          file: blobs-yml/blobs.yml
+          file: config/blobs.yml
       - put: s3-rc-release
         params:
           file: create-rc-release/kafka-*.tgz
@@ -103,18 +103,22 @@ jobs:
     public: true
     serial: true
     plan:
-      - get: kafka-repo
-        trigger: false
-        passed: 
-          - create-rc-release
+      - in_parallel:
+        - get: kafka-repo
+          trigger: false
+          passed: 
+            - create-rc-release
+        - get: s3-rc-release
+        - get: blobs-yml
+          passed:
+            - create-rc-release
+        - get: boshcli2
       - get: version
         trigger: false
         params:
           bump: final
         passed:
           - create-rc-release
-      - get: s3-rc-release
-      - get: boshcli2
       - task: create-final-release
         file: kafka-repo/ci/tasks/create-final-release.yml
         image: boshcli2
