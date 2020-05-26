@@ -89,6 +89,7 @@ main() {
   
   if [[ ${RUN_PIPELINE} -eq 1 ]] ; then
 
+    BRANCH=$(git name-rev --name-only $(git rev-list  HEAD --date-order --max-count 1))
     cp config/final.yml config/final.yml.old
     
     cat << EOF > config/final.yml
@@ -115,6 +116,7 @@ EOF
   
   mv config/final.yml.old config/final.yml
 
+  
   git config --global user.email "CI@localhost"
   git config --global user.name "CI Bot "
 
@@ -123,7 +125,6 @@ EOF
   git status
   git commit -m "Adding blobs to blobs store ${BLOBSTORE} via concourse"
 
-  BRANCH=$(git name-rev --name-only $(git rev-list  HEAD --date-order --max-count 1))
   git clone -b ${BRANCH} . ${PRERELEASE_REPO}
   fi
 
