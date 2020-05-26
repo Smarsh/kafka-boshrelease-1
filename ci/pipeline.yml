@@ -27,7 +27,7 @@ resources:
       driver: s3
       << : *smarsh_releases_bucket
       region: eu-west-2
-      key: sredataservices/version
+      key: sredataservices/kafka/version
       initial_version: 2.4.2
 
   - name: kafka-repo

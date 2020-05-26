@@ -122,7 +122,7 @@ EOF
 
   git checkout ${BRANCH}
   git status
-  git add config/blobs.yml
+  git add -A
   git status
   git commit -m "Adding blobs to blobs store ${BLOBSTORE} via concourse"
 

@@ -51,11 +51,16 @@ EOF
 
 git update-index --assume-unchanged config/final.yml
 
+[[ -d .final_builds ]]  && rm -fr .final_builds
+
+git status
+git add -A
+git commit -am "Pre-stage final release stage change, ${BOSH_RELEASE_VERSION} via concourse"
+
 bosh create-release --final --version=${BOSH_RELEASE_VERSION} --tarball "../s3-rc-release/kafka-${BOSH_RELEASE_VERSION}.tgz"
 
 git status
 git add -A
-git status
-git commit -am "Adding final release, ${BOSH_RELEASE_VERSION} via concourse"
+git commit -am "Final release stage change, ${BOSH_RELEASE_VERSION} via concourse"
 
 popd
