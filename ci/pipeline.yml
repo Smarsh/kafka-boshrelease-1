@@ -20,12 +20,6 @@ resources:
       username: ((docker.username))
       password: ((docker.password))
       tag: latest
-  
-  - name: s3-rc-release
-    type: s3
-    source:
-      << : *smarsh_releases_bucket
-      regexp: sredataservices/rc-release/kafka-(.*).tgz
 
   - name: version
     type: semver
@@ -86,28 +80,6 @@ jobs:
         params: {bump: patch}
     - put: version
       params: {file: version/number}
-
-  - name: create-rc-release
-    public: true
-    serial: true
-    plan:
-      - in_parallel:
-        - get: git-blob-update
-          trigger: true
-        - get: boshcli2
-      # - get: version
-      #   trigger: false
-      #   params:
-      #     pre: rc 
-      # - put: version
-      #   params:
-      #     file: version/number
-      - task: create-rc-release
-        file: kafka-repo/ci/tasks/create-rc-release.yml
-        image: boshcli2
-      - put: s3-rc-release
-        params:
-          file: create-rc-release/kafka-*.tgz
 
   - name: cut-release
     public: true

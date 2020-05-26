@@ -7,8 +7,9 @@ echo "Configuring files, keys, certs and directories"
 echo "==="
 echo "==="
 GITHUB_REPO="kafka-repo"
-PROMOTED_REPO='kafka-repo-release'
+PRERELEASE_REPO=../kafka-prerelease-repo
 BOSH_RELEASE_VERSION=$(cat ${ROOT_DIR}/version/version)
+
 
 git clone $GITHUB_REPO $PROMOTED_REPO
 
@@ -20,7 +21,7 @@ bosh alias-env $BOSH_ENVIRONMENT -e $BOSH_ENVIRONMENT --ca-cert ${PWD}/ca_cert.c
 export BOSH_ALL_PROXY=ssh+socks5://jumpbox@${BOSH_ENVIRONMENT}:22?private-key=${PWD}/jumpbox.key
 
 ## change directories into the master branch of the repository that is cloned, not the branched clone
-pushd $PROMOTED_REPO
+pushd $PRERELEASE_REPO
 
 git config --global user.email "ci@localhost"
 git config --global user.name "CI Bot"
@@ -55,8 +56,8 @@ bosh create-release --final --version=${BOSH_RELEASE_VERSION} --tarball "../s3-r
 mv config/final.yml.old config/final.yml
 
 git status
-git add -A
-git status
-git commit -m "Adding final release, ${BOSH_RELEASE_VERSION} via concourse"
+#git add -A
+#git status
+#git commit -m "Adding final release, ${BOSH_RELEASE_VERSION} via concourse"
 
 popd

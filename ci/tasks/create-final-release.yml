@@ -2,6 +2,7 @@
 platform: linux
 inputs:
 - name: kafka-repo
+- name: kafka-prerelease-repo
 - name: add-blobs
 - name: version
 outputs:

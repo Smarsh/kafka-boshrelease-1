@@ -5,6 +5,7 @@ inputs:
 - name: version
 outputs:
 - name: add-blobs
+- name: kafka-prerelease-repo
 run:
   path: ci/tasks/add-blobs.sh
   dir: kafka-repo

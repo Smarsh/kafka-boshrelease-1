@@ -12,6 +12,7 @@ OUTPUT_DIR=add-blobs
 SOURCE_DL_DIR=.downloads
 BOSH_RELEASE_VERSION_FILE=../version/version
 SOURCE_VERSION_FILE="$(pwd)/VERSIONS"
+PRERELEASE_REPO=../kafka-prerelease-repo
 RUN_PIPELINE=0 # if script is running locally then 0 if in consourse pipeline then 1
 
 BOLD=$(tput bold)
@@ -113,10 +114,17 @@ EOF
   bosh upload-blobs
   
   mv config/final.yml.old config/final.yml
+
+  git config --global user.email "CI@localhost"
+  git config --global user.name "CI Bot "
+
   git status
-  git add -A
+  git add config/blobs.yml
   git status
   git commit -m "Adding blobs to blobs store ${BLOBSTORE} via concourse"
+
+
+  git clone . ${PRERELEASE_REPO}
   fi
 
 }
