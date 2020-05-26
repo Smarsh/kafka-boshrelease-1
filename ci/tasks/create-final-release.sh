@@ -8,7 +8,7 @@ echo "==="
 echo "==="
 GITHUB_REPO="kafka-repo"
 PRERELEASE_REPO=./kafka-prerelease-repo
-BOSH_RELEASE_VERSION=$(cat ${ROOT_DIR}/version-final/version)
+BOSH_RELEASE_VERSION=$(cat ${ROOT_DIR}/version/version)
 
 
 echo "$jumpbox_key" | jq -r .private_key > jumpbox.key

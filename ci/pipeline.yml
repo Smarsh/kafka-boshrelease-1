@@ -75,12 +75,12 @@ jobs:
           bump: patch
         passed:
           - rc
-      - get: version-final
+      - get: version
         trigger: false
         params:
           bump: final
-        passed:
-          - rc
+        # passed:
+        #   - rc
       - task: add-blobs
         file: kafka-repo/ci/tasks/add-blobs.yml
         image: boshcli2
@@ -98,7 +98,7 @@ jobs:
       - put: kafka-final-release
         params:
           file: release-tarball/kafka-*.tgz
-      - put: version-final
-        params: {file: version-final/number}
+      - put: version
+        params: {file: version/number}
        
       
