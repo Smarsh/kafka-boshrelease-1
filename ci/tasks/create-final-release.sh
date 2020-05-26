@@ -50,8 +50,9 @@ blobstore:
     credentials_source: env_or_profile
 EOF
 
-bosh create-release --final --version=${BOSH_RELEASE_VERSION} --tarball "../s3-rc-release/kafka-${BOSH_RELEASE_VERSION}.tgz"
+git status
 mv config/final.yml.old config/final.yml
+bosh create-release --final --version=${BOSH_RELEASE_VERSION} --tarball "../s3-rc-release/kafka-${BOSH_RELEASE_VERSION}.tgz"
 
 git status
 #git add -A

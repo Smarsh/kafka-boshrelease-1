@@ -46,18 +46,6 @@ resources:
 
 jobs:
 
-  - name: rc
-    public: true
-    plan:
-    - in_parallel:
-      - get: kafka-repo
-        trigger: true
-      - get: version
-        trigger: false
-        params: {pre: rc}
-    - put: version
-      params: {file: version/number}
-
   - name: cut-release
     public: true
     serial: true
@@ -66,21 +54,11 @@ jobs:
         - get: kafka-repo
           trigger: true
           version: latest
-          passed: 
-            - rc
         - get: boshcli2
       - get: version
         trigger: false
         params:
           bump: patch
-        passed:
-          - rc
-      - get: version
-        trigger: false
-        params:
-          bump: final
-        # passed:
-        #   - rc
       - task: add-blobs
         file: kafka-repo/ci/tasks/add-blobs.yml
         image: boshcli2
