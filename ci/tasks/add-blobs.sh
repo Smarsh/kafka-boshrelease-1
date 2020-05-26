@@ -120,6 +120,7 @@ EOF
   git config --global user.email "CI@localhost"
   git config --global user.name "CI Bot "
 
+  git checkout ${BRANCH}
   git status
   git add config/blobs.yml
   git status
