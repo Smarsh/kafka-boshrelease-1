@@ -87,7 +87,8 @@ jobs:
     plan:
       - in_parallel:
         - get: kafka-repo
-          trigger: false
+          trigger: true
+          version: latest
           passed: 
             - patch
         - get: boshcli2

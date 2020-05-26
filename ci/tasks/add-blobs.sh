@@ -123,8 +123,8 @@ EOF
   git status
   git commit -m "Adding blobs to blobs store ${BLOBSTORE} via concourse"
 
-
-  git clone . ${PRERELEASE_REPO}
+  BRANCH=$(git name-rev --name-only $(git rev-list  HEAD --date-order --max-count 1))
+  git clone -b ${BRANCH} . ${PRERELEASE_REPO}
   fi
 
 }
