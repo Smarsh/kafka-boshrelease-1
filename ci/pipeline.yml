@@ -46,8 +46,7 @@ resources:
 
 jobs:
 
-  
-  - name: patch
+  - name: rc
     public: true
     plan:
     - in_parallel:
@@ -55,7 +54,7 @@ jobs:
         trigger: true
       - get: version
         trigger: false
-        params: {bump: patch}
+        params: {pre: rc}
     - put: version
       params: {file: version/number}
 
@@ -68,14 +67,20 @@ jobs:
           trigger: true
           version: latest
           passed: 
-            - patch
+            - rc
         - get: boshcli2
       - get: version
         trigger: false
         params:
+          bump: patch
+        passed:
+          - rc
+      - get: version-final
+        trigger: false
+        params:
           bump: final
         passed:
-          - patch
+          - rc
       - task: add-blobs
         file: kafka-repo/ci/tasks/add-blobs.yml
         image: boshcli2
@@ -93,7 +98,7 @@ jobs:
       - put: kafka-final-release
         params:
           file: release-tarball/kafka-*.tgz
-      - name: version-bump
-        put: version
-        params:
-          bump: patch
+      - put: version-final
+        params: {file: version-final/number}
+       
+      

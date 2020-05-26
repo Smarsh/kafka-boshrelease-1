@@ -4,7 +4,7 @@ inputs:
 - name: kafka-repo
 - name: kafka-prerelease-repo
 - name: add-blobs
-- name: version
+- name: version-final
 outputs:
 - name: release-tarball
 - name: kafka-repo-release
