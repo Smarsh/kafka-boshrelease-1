@@ -4,8 +4,7 @@ inputs:
 - name: kafka-repo
 - name: version
 outputs:
-- name: create-rc-release
-- name: blobs-yml
+- name: add-blobs
 run:
-  path: ci/tasks/create-rc-release.sh
+  path: ci/tasks/add-blobs.sh
   dir: kafka-repo

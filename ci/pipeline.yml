@@ -11,12 +11,6 @@ anchors:
     jumpbox_key: ((jumpbox-key))
     ca_cert: ((ca-cert))
     BOSH_ENVIRONMENT: ((bosh-environment))
-
-resource_types:
-  - name: cache-file-contents
-    type: docker-image
-    source:
-      repository: moredhel/keyval-resource
       
 resources:
   - name: boshcli2
@@ -48,6 +42,15 @@ resources:
     source:
       uri: https://github.com/Smarsh/cf-kafka-boshrelease
       branch: SAAS-281
+
+  - name: git-blob-update
+    type: git
+    icon: github-circle
+    source:
+      uri: https://github.com/Smarsh/cf-kafka-boshrelease
+      path: 
+        - VERSIONS
+      branch: SAAS-281
   
   - name: kafka-final-release
     type: s3
@@ -55,8 +58,6 @@ resources:
       << : *smarsh_releases_bucket
       regexp: sredataservices/release/kafka-(.*).tgz
 
-  - name: blobs-yml
-    type: cache-file-contents
 
 jobs:
 
@@ -64,7 +65,7 @@ jobs:
     public: true
     serial: true
     plan:
-      - get: kafka-repo
+      - get: git-blob-update
         trigger: true
       - get: version
         trigger: false
@@ -73,28 +74,37 @@ jobs:
       - put: version
         params:
           file: version/number
+  
+  - name: patch
+    public: true
+    plan:
+    - in_parallel:
+      - get: kafka-repo
+        trigger: true
+      - get: version
+        trigger: false
+        params: {bump: patch}
+    - put: version
+      params: {file: version/number}
 
   - name: create-rc-release
     public: true
     serial: true
     plan:
       - in_parallel:
-        - get: kafka-repo
+        - get: git-blob-update
           trigger: true
         - get: boshcli2
-      - get: version
-        trigger: false
-        params:
-          pre: rc 
-      - put: version
-        params:
-          file: version/number
+      # - get: version
+      #   trigger: false
+      #   params:
+      #     pre: rc 
+      # - put: version
+      #   params:
+      #     file: version/number
       - task: create-rc-release
-        file: kafka-repo/ci/tasks/create-rc-release.yml 
+        file: kafka-repo/ci/tasks/create-rc-release.yml
         image: boshcli2
-      - put: blobs-yml
-        params:
-          file: config/blobs.yml
       - put: s3-rc-release
         params:
           file: create-rc-release/kafka-*.tgz
@@ -107,18 +117,21 @@ jobs:
         - get: kafka-repo
           trigger: false
           passed: 
-            - create-rc-release
-        - get: s3-rc-release
-        - get: blobs-yml
-          passed:
-            - create-rc-release
+            - patch
         - get: boshcli2
       - get: version
         trigger: false
         params:
           bump: final
         passed:
-          - create-rc-release
+          - patch
+      - task: add-blobs
+        file: kafka-repo/ci/tasks/add-blobs.yml
+        image: boshcli2
+        params: 
+          << : *blobstore_credentials
+          << : *bosh-creds
+          BLOBSTORE: smarsh-bosh-release-blobs
       - task: create-final-release
         file: kafka-repo/ci/tasks/create-final-release.yml
         image: boshcli2

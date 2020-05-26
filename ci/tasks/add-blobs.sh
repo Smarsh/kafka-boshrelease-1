@@ -8,10 +8,11 @@ fi
 
 SHELL=/bin/bash
 ROOT_DIR=$(pwd)
-OUTPUT_DIR=create-rc-release
+OUTPUT_DIR=add-blobs
 SOURCE_DL_DIR=.downloads
 BOSH_RELEASE_VERSION_FILE=../version/version
 SOURCE_VERSION_FILE="$(pwd)/VERSIONS"
+RUN_PIPELINE=0 # if script is running locally then 0 if in consourse pipeline then 1
 
 BOLD=$(tput bold)
 RED=$(tput setaf 1)
@@ -27,6 +28,7 @@ JAVA_VERSION=${JAVA_VERSION:?required}
 
 if [[ -f  ${BOSH_RELEASE_VERSION_FILE} ]] ; then
   BOSH_RELEASE_VERSION=$(cat ${BOSH_RELEASE_VERSION_FILE})
+  RUN_PIPELINE=1
 else 
   BOSH_RELEASE_VERSION=${KAFKA_VERSION}
 fi
@@ -75,11 +77,6 @@ main() {
 
   done
 
-  # cache blobs.yml file for jobs that require it as there is no ability to cache artficats
-  # between jobs
-  if [[ -d ../blobs-yml ]]; then
-    cat config/blobs.yml > ../blobs-yml/blobs.yml
-  fi
 
   printf "\n${BOLD}${GREEN}Create release version ${BOSH_RELEASE_VERSION}${RESET}\n"
   
@@ -88,6 +85,40 @@ main() {
   # that requires this hidden directory to be renamed/removed
   [[ -f  ${BOSH_RELEASE_VERSION_FILE} ]] && rm -fr .final_builds
   bosh create-release --force --name kafka --version=${BOSH_RELEASE_VERSION} --timestamp-version --tarball=${tarBallPath}
+  
+  if [[ ${RUN_PIPELINE} -eq 1 ]] ; then
+
+    cp config/final.yml config/final.yml.old
+    
+    cat << EOF > config/final.yml
+---
+blobstore:
+  provider: s3
+  options:
+    bucket_name: ${BLOBSTORE}
+name: kafka
+EOF
+
+## Create private.yml for BOSH to use our AWS keys
+    cat << EOF > config/private.yml
+---
+blobstore:
+  provider: s3
+  options:
+    credentials_source: env_or_profile
+EOF
+
+  printf "\n${BOLD}${GREEN}Upload blobs ${BOSH_RELEASE_VERSION}${RESET}\n"
+  bosh blobs
+  bosh upload-blobs
+  
+  mv config/final.yml.old config/final.yml
+  git status
+  git add -A
+  git status
+  git commit -m "Adding blobs to blobs store ${BLOBSTORE} via concourse"
+  fi
+
 }
 
 bosh reset-release

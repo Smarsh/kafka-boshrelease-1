@@ -1,11 +1,15 @@
 #!/bin/bash
 set -eux
 
+ROOT_DIR=$(pwd)
+
 echo "Configuring files, keys, certs and directories"
 echo "==="
 echo "==="
 GITHUB_REPO="kafka-repo"
 PROMOTED_REPO='kafka-repo-release'
+BOSH_RELEASE_VERSION=$(cat ${ROOT_DIR}/version/version)
+
 git clone $GITHUB_REPO $PROMOTED_REPO
 
 echo "$jumpbox_key" | jq -r .private_key > jumpbox.key
@@ -18,18 +22,28 @@ export BOSH_ALL_PROXY=ssh+socks5://jumpbox@${BOSH_ENVIRONMENT}:22?private-key=${
 ## change directories into the master branch of the repository that is cloned, not the branched clone
 pushd $PROMOTED_REPO
 
+git config --global user.email "ci@localhost"
+git config --global user.name "CI Bot"
+
 echo "Cutting a final release"
 echo "==="
 echo "==="
 
 ## Download all of the blobs and packages from the kafka-boshrelease bucket that is read only
-echo bosh create-release --final --version=123 --tarball "../s3-rc-release/kafka-*.tgz" || true
 
-## Change the bucket destination to smarshes bosh release blobs
-sed -i 's/: kafka-boshrelease.*/: smarsh-bosh-release-blobs/' config/final.yml
+cp config/final.yml config/final.yml.old
+    
+    cat << EOF > config/final.yml
+---
+blobstore:
+  provider: s3
+  options:
+    bucket_name: ${BLOBSTORE}
+name: kafka
+EOF
 
 ## Create private.yml for BOSH to use our AWS keys
-cat << EOF > config/private.yml
+    cat << EOF > config/private.yml
 ---
 blobstore:
   provider: s3
@@ -37,6 +51,12 @@ blobstore:
     credentials_source: env_or_profile
 EOF
 
-## Now that we've downloaded everything needed from the read only bucket, edited the final.yml and created a private.yml our release can be made.
-echo bosh create-release --final --force --version=2.4.1-1 --tarball "../s3-rc-release/kafka-*.tgz"
+bosh create-release --final --version=${BOSH_RELEASE_VERSION} --tarball "../s3-rc-release/kafka-${BOSH_RELEASE_VERSION}.tgz"
+mv config/final.yml.old config/final.yml
+
+git status
+git add -A
+git status
+git commit -m "Adding final release, ${BOSH_RELEASE_VERSION} via concourse"
+
 popd
