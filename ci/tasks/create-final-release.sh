@@ -30,7 +30,6 @@ echo "==="
 
 ## Download all of the blobs and packages from the kafka-boshrelease bucket that is read only
 
-cp config/final.yml config/final.yml.old
     
     cat << EOF > config/final.yml
 ---
@@ -50,13 +49,13 @@ blobstore:
     credentials_source: env_or_profile
 EOF
 
-git status
-mv config/final.yml.old config/final.yml
+git update-index --assume-unchanged config/final.yml
+
 bosh create-release --final --version=${BOSH_RELEASE_VERSION} --tarball "../s3-rc-release/kafka-${BOSH_RELEASE_VERSION}.tgz"
 
 git status
-#git add -A
-#git status
-#git commit -m "Adding final release, ${BOSH_RELEASE_VERSION} via concourse"
+git add -A
+git status
+git commit -am "Adding final release, ${BOSH_RELEASE_VERSION} via concourse"
 
 popd
