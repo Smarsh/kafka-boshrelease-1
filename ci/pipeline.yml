@@ -36,15 +36,6 @@ resources:
     source:
       uri: https://github.com/Smarsh/cf-kafka-boshrelease
       branch: SAAS-281
-
-  - name: git-blob-update
-    type: git
-    icon: github-circle
-    source:
-      uri: https://github.com/Smarsh/cf-kafka-boshrelease
-      path: 
-        - VERSIONS
-      branch: SAAS-281
   
   - name: kafka-final-release
     type: s3
@@ -55,19 +46,6 @@ resources:
 
 jobs:
 
-  - name: rc
-    public: true
-    serial: true
-    plan:
-      - get: git-blob-update
-        trigger: true
-      - get: version
-        trigger: false
-        params:
-          pre: rc 
-      - put: version
-        params:
-          file: version/number
   
   - name: patch
     public: true

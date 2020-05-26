@@ -11,8 +11,6 @@ PRERELEASE_REPO=../kafka-prerelease-repo
 BOSH_RELEASE_VERSION=$(cat ${ROOT_DIR}/version/version)
 
 
-git clone $GITHUB_REPO $PROMOTED_REPO
-
 echo "$jumpbox_key" | jq -r .private_key > jumpbox.key
 echo "$ca_cert" | jq -r .certificate > ca_cert.crt
 
