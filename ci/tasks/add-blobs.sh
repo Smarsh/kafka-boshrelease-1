@@ -10,9 +10,10 @@ SHELL=/bin/bash
 ROOT_DIR=$(pwd)
 OUTPUT_DIR=add-blobs
 SOURCE_DL_DIR=.downloads
-BOSH_RELEASE_VERSION_FILE=../version/version
+BOSH_RELEASE_VERSION_FILE=../version/number
 SOURCE_VERSION_FILE="$(pwd)/VERSIONS"
-PRERELEASE_REPO=../kafka-prerelease-repo
+RELEASE_NAME=$(bosh int config/final.yml --path /final_name)
+PRERELEASE_REPO=../prerelease-repo
 RUN_PIPELINE=0 # if script is running locally then 0 if in consourse pipeline then 1
 
 BOLD=$(tput bold)
@@ -39,12 +40,18 @@ downloads[kafka/kafka_2.12-${KAFKA_VERSION}.zip]="https://downloads.apache.org/k
 downloads[kafka/kafka-manager-${KAFKA_MANAGER_VERSION}.tgz]="https://codeload.github.com/yahoo/CMAK/tar.gz/${KAFKA_MANAGER_VERSION}"
 downloads[java/jdk${JAVA_VERSION}.tar.gz]="https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u252-b09/OpenJDK8U-jdk_x64_linux_hotspot_${JAVA_VERSION/-/}.tar.gz"
 
+loginfo() {
+  echo "###"
+  echo "###"
+  printf "### ${BOLD}${GREEN}${1}${RESET}\n"
+  echo "###"
+}
 
 download() {
   local file=${1}
   local url=${2}
 
-  printf "\n${BOLD}${GREEN}Downloading ${url} ...${RESET}\n"
+  loginfo "Downloading ${url} ..."
   curl --fail -L -o $file $url 
 }
 
@@ -52,18 +59,19 @@ addBlob() {
   local path=${1}
   local blobPath=${2}
 
-  printf "\n${BOLD}${GREEN}Track blob ${blobPath} for inclusion in release${RESET}\n"
+  loginfo "Track blob ${blobPath} for inclusion in release"
   bosh add-blob $path ${blobPath}
 }
 
 main() {
   [[ ! -d ${SOURCE_DL_DIR} ]] && mkdir ${SOURCE_DL_DIR}
 
-  if [[ ! -d ../${OUTPUT_DIR} ]] ; then 
-    tarBallPath=${SOURCE_DL_DIR}/kafka-${BOSH_RELEASE_VERSION}.tgz
+  if [[  ${RUN_PIPELINE} -eq 1 ]] ; then 
+    tarBallPath=${SOURCE_DL_DIR}/${RELEASE_NAME}-${BOSH_RELEASE_VERSION}.tgz
   else
-    tarBallPath=../${OUTPUT_DIR}/kafka-${BOSH_RELEASE_VERSION}.tgz
+    tarBallPath=../${OUTPUT_DIR}/${RELEASE_NAME}-${BOSH_RELEASE_VERSION}.tgz
   fi
+
 
   # remove blobs
   > config/blobs.yml
@@ -78,19 +86,20 @@ main() {
 
   done
 
-
-  printf "\n${BOLD}${GREEN}Create release version ${BOSH_RELEASE_VERSION}${RESET}\n"
+  loginfo "Create release version ${BOSH_RELEASE_VERSION}"
   
   # fix - removing .final_builds folder is not necessary when running locally however when running in a pipeline 
   # which uses bosh version 6.2.1 bosh create-release --force fails
   # that requires this hidden directory to be renamed/removed
   [[ -f  ${BOSH_RELEASE_VERSION_FILE} ]] && rm -fr .final_builds
+  
   bosh create-release --force --name kafka --version=${BOSH_RELEASE_VERSION} --timestamp-version --tarball=${tarBallPath}
   
+
   if [[ ${RUN_PIPELINE} -eq 1 ]] ; then
 
     BRANCH=$(git name-rev --name-only $(git rev-list  HEAD --date-order --max-count 1))
-    cp config/final.yml config/final.yml.old
+
     
     cat << EOF > config/final.yml
 ---
@@ -98,7 +107,7 @@ blobstore:
   provider: s3
   options:
     bucket_name: ${BLOBSTORE}
-name: kafka
+final_name: ${RELEASE_NAME}
 EOF
 
 ## Create private.yml for BOSH to use our AWS keys
@@ -110,23 +119,25 @@ blobstore:
     credentials_source: env_or_profile
 EOF
 
-  printf "\n${BOLD}${GREEN}Upload blobs ${BOSH_RELEASE_VERSION}${RESET}\n"
+  loginfo "Upload blobs ${BOSH_RELEASE_VERSION}"
+
   bosh blobs
-  bosh upload-blobs
+  bosh -n upload-blobs
   
-  mv config/final.yml.old config/final.yml
+    if [[ -n "$(git status --porcelain)" ]]; then
 
-  
-  git config --global user.email "CI@localhost"
-  git config --global user.name "CI Bot "
+      git config --global user.email "CI@localhost"
+      git config --global user.name "CI Bot "
 
-  git checkout ${BRANCH}
-  git status
-  git add -A
-  git status
-  git commit -m "Adding blobs to blobs store ${BLOBSTORE} via concourse"
+      git checkout ${BRANCH}
+      git status
+      git add config .final_builds || true
+      git update-index --assume-unchanged config/final.yml
+      git status
+      git commit -m "Adding blobs to blobs store ${BLOBSTORE} via concourse"
 
-  git clone -b ${BRANCH} . ${PRERELEASE_REPO}
+      git clone -b ${BRANCH} . ${PRERELEASE_REPO}
+    fi
   fi
 
 }
