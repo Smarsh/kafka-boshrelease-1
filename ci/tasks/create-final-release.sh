@@ -7,7 +7,7 @@ echo "Configuring files, keys, certs and directories"
 echo "==="
 echo "==="
 GITHUB_REPO="kafka-repo"
-PRERELEASE_REPO=./prerelease-repo
+PRERELEASE_REPO=./kafka-prerelease-repo
 BOSH_RELEASE_VERSION=$(cat ${ROOT_DIR}/version/version)
 
 
