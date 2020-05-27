@@ -7,7 +7,7 @@ echo "Configuring files, keys, certs and directories"
 echo "==="
 echo "==="
 GITHUB_REPO="kafka-repo"
-PRERELEASE_REPO=./kafka-prerelease-repo
+PRERELEASE_REPO=./prerelease-repo
 BOSH_RELEASE_VERSION=$(cat ${ROOT_DIR}/version/version)
 
 
@@ -54,13 +54,12 @@ git update-index --assume-unchanged config/final.yml
 [[ -d .final_builds ]]  && rm -fr .final_builds
 
 git status
-git add -A
 git commit -am "Pre-stage final release stage change, ${BOSH_RELEASE_VERSION} via concourse"
 
 bosh create-release --final --version=${BOSH_RELEASE_VERSION} --tarball "../s3-rc-release/kafka-${BOSH_RELEASE_VERSION}.tgz"
 
 git status
-git add -A
+git add config .final_builds releases || true
 git commit -am "Final release stage change, ${BOSH_RELEASE_VERSION} via concourse"
 
 popd

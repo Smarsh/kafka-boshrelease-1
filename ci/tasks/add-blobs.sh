@@ -41,10 +41,12 @@ downloads[kafka/kafka-manager-${KAFKA_MANAGER_VERSION}.tgz]="https://codeload.gi
 downloads[java/jdk${JAVA_VERSION}.tar.gz]="https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u252-b09/OpenJDK8U-jdk_x64_linux_hotspot_${JAVA_VERSION/-/}.tar.gz"
 
 loginfo() {
+  echo
   echo "###"
   echo "###"
   printf "### ${BOLD}${GREEN}${1}${RESET}\n"
   echo "###"
+  echo
 }
 
 download() {
