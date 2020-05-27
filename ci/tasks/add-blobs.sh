@@ -13,7 +13,7 @@ SOURCE_DL_DIR=.downloads
 BOSH_RELEASE_VERSION_FILE=../version/number
 SOURCE_VERSION_FILE="$(pwd)/VERSIONS"
 RELEASE_NAME=$(bosh int config/final.yml --path /final_name)
-PRERELEASE_REPO=../prerelease-repo
+PRERELEASE_REPO=../kafka-prerelease-repo
 RUN_PIPELINE=0 # if script is running locally then 0 if in consourse pipeline then 1
 
 BOLD=$(tput bold)
