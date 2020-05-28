@@ -90,7 +90,6 @@ main() {
     tarBallPath=../${OUTPUT_DIR}/${RELEASE_NAME}-${BOSH_RELEASE_VERSION}.tgz
   fi
 
-
   
   for key in "${!downloads[@]}" 
   do
@@ -98,8 +97,17 @@ main() {
     local blobPath=${key}
 
     download ${file} ${downloads[${key}]}
-    # remove blobs
-    > config/blobs.yml
+
+  done
+  
+  # remove blobs
+  > config/blobs.yml
+
+  for key in "${!downloads[@]}" 
+  do
+    local file=${SOURCE_DL_DIR}/$(basename ${key})
+    local blobPath=${key}
+
     addBlob ${file} ${blobPath}
 
   done
