@@ -87,7 +87,6 @@ main() {
   if [[  ${RUN_PIPELINE} -eq 1 ]] ; then 
     tarBallPath=${SOURCE_DL_DIR}/${RELEASE_NAME}-${BOSH_RELEASE_VERSION}.tgz
   else
-
     tarBallPath=/tmp/bosh-release-$$/${RELEASE_NAME}-${BOSH_RELEASE_VERSION}.tgz
   fi
 
@@ -113,7 +112,6 @@ main() {
 
   done
 
-
   if [[ ${RUN_PIPELINE} -eq 1 ]] ; then
 
     loginfo "Create release version ${BOSH_RELEASE_VERSION}"
@@ -126,7 +124,6 @@ main() {
     bosh create-release --force --name ${RELEASE_NAME} --version=${BOSH_RELEASE_VERSION} --timestamp-version --tarball=${tarBallPath}
     
     BRANCH=$(git name-rev --name-only $(git rev-list  HEAD --date-order --max-count 1))
-
     
     cat << EOF > config/final.yml
 ---
