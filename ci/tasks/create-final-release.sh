@@ -11,7 +11,7 @@ fi
 GITHUB_REPO="git-repo"
 BOSH_RELEASE_VERSION=$(cat ${ROOT_DIR}/version/version)
 BOSH_RELEASE_VERSION_FILE=../version/number
-RELEASE_NAME=$(bosh int config/final.yml --path /final_name)
+RELEASE_NAME=$(bosh int ${GITHUB_REPO}/config/final.yml --path /final_name)
 PRERELEASE_REPO=../git-prerelease-repo
 RUN_PIPELINE=0 # if script is running locally then 0 if in consourse pipeline then 1
 
@@ -51,7 +51,7 @@ git config --global user.name "CI Bot"
 
 loginfo "Cutting a final release"
 
-## Download all of the blobs and packages from the kafka-boshrelease bucket that is read only
+## Download all of the blobs and packages from the boshrelease bucket that is read only
 
     
     cat << EOF > config/final.yml
