@@ -33,10 +33,12 @@ loginfo() {
 
 loginfo "Configuring files, keys, certs and directories"
 
+set +x
 
+echo "$jumpbox_key" | jq -r .private_key > jumpbox.key 
+echo "$ca_cert" | jq -r .certificate > ca_cert.crt
 
-echo "$jumpbox_key" | jq -r .private_key > jumpbox.key > /dev/null
-echo "$ca_cert" | jq -r .certificate > ca_cert.crt > /dev/null
+set -x
 
 loginfo "Configuring BOSH environment"
 
