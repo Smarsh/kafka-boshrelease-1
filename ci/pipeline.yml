@@ -37,7 +37,7 @@ resources:
       uri: ((url))
       branch: SAAS-281
   
-  - name: ((release-name))-final-release
+  - name: s3-final-release
     type: s3
     source:
       << : *smarsh_releases_bucket
@@ -73,7 +73,7 @@ jobs:
           << : *blobstore_credentials
           << : *bosh-creds
           BLOBSTORE: smarsh-bosh-release-blobs
-      - put: git-final-release
+      - put: s3-final-release
         params:
           file: release-tarball/((bosh-release-name))-*.tgz
       - put: version

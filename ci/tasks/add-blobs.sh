@@ -58,8 +58,6 @@ addBlob() {
   bosh add-blob $path ${blobPath}
 }
 
-
-
 main() {
 
   if [[ -f ${SOURCE_VERSION_FILE} ]] ; then 
