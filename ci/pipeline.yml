@@ -16,7 +16,7 @@ resources:
   - name: boshcli2
     type: registry-image
     source:
-      repository: afamuzoka/boshcli2
+      repository: smarshsre/data-services-boshcli2
       username: ((docker.username))
       password: ((docker.password))
       tag: latest
