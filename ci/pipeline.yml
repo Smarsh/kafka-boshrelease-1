@@ -42,7 +42,7 @@ resources:
     type: s3
     source:
       << : *smarsh_releases_bucket
-      regexp: sredataservices/kafka/2.4.2/((bosh-release-name))-(.*).tgz
+      regexp: sredataservices/kafka/kafka-2.4.2/0.1.0/((bosh-release-name))-(.*).tgz
 
 jobs:
 
