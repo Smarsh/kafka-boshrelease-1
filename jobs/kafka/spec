@@ -126,5 +126,37 @@ properties:
        This determines the number of retries when such failure happens
     default: 3
 
-
+  auto_create_topics_enable:
+    description:
+       Auto creation of topics either by EA code or from kafka nodes
+    default: false
+    
+  min_insync_replicas:
+    description:
+       No. of kafka brokers to be up for kafka to run without issues.
+    default: 1
+    
+  default_replication_factor:
+    description:
+       The default replication factor for a topic.
+    default: 3
+    
+  num_replica_fetchers:
+    description:
+       The no. of replica fetches for a partition.
+    default: 1
+      
+  message_max_bytes:
+    description:
+       Max size of a message written to kafka.
+    default: 4000000
   
+  auto_leader_rebalance_enable:
+    description:
+      Data rebalance to other brokers when a leader of partition is down.
+    default: true
+    
+  log_retention_hours:
+    description:
+      No. of hours kafka brokers stores the data after which data is purged.
+    default: 720
